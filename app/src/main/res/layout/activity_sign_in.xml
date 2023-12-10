@@ -34,9 +34,56 @@ tools:context=".SignInActivity">
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/password"
         android:hint="@string/password"
-        android:layout_width="480dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 </com.google.android.material.textfield.TextInputLayout>
+
+<com.google.android.material.textfield.TextInputLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/tel"
+        android:hint="@string/numero_de_t_l_phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+</com.google.android.material.textfield.TextInputLayout>
+
+<RadioGroup
+    android:id="@+id/roleRadioGroup"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <RadioButton
+        android:id="@+id/radioBuyer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Acheteur" />
+
+    <RadioButton
+        android:id="@+id/radioPlanner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Planificateur" />
+
+    <RadioButton
+        android:id="@+id/radioDriver"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Chauffeur" />
+</RadioGroup>
+
+<com.google.android.material.textfield.TextInputLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/immatriculation"
+        android:hint="@string/numero_d_immatriculation_du_v_hicule"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
+</com.google.android.material.textfield.TextInputLayout>
+
 <ProgressBar
     android:id="@+id/progressBar"
     android:visibility="gone"

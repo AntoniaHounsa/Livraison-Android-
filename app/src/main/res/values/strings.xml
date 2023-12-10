@@ -7,4 +7,6 @@
     <string name="s_inscrire">S\'inscrire</string>
     <string name="cliquez_pour_vous_connectez">Cliquez pour vous connectez</string>
     <string name="d_connexion">Déconnexion</string>
+    <string name="numero_de_t_l_phone">Numero de téléphone</string>
+    <string name="numero_d_immatriculation_du_v_hicule">Numero d\'immatriculation du véhicule</string>
 </resources>

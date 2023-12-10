@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "291178603677",
+    "project_id": "easydelivery-26cd7",
+    "storage_bucket": "easydelivery-26cd7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:291178603677:android:a24b2e2e3a4caa1cd1e074",
+        "android_client_info": {
+          "package_name": "com.example.easydelivery"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBo2oZRIKR7lW2m9Bm-uhqmX20GI1Qk4iM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

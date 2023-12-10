@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">EasyDelivery</string>
+    <string name="se_connecter">Se connecter</string>
+    <string name="email">Email\n</string>
+    <string name="password">Password\n</string>
+    <string name="login">Login\n</string>
+    <string name="s_inscrire">S\'inscrire</string>
+    <string name="cliquez_pour_vous_connectez">Cliquez pour vous connectez</string>
+    <string name="d_connexion">Déconnexion</string>
 </resources>

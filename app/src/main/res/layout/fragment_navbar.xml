@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/layout/fragment_navbar.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp"
+    android:background="#F4978E"
+    android:gravity="center_vertical">
+
+    <TextView
+        android:id="@+id/user_details"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:text="Email utilisateur"
+        android:gravity="start"
+        android:paddingStart="16dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+
+    <Button
+        android:id="@+id/logoutButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Déconnexion"
+        android:gravity="end"
+        android:paddingEnd="16dp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"/>
+</LinearLayout>

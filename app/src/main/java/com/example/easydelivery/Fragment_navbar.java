@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -20,6 +21,7 @@ public class Fragment_navbar extends Fragment {
     FirebaseUser user;
     TextView textView;
     FirebaseAuth auth;
+    ImageView userlogo;
 
 
     @Nullable
@@ -49,6 +51,15 @@ public class Fragment_navbar extends Fragment {
         else{
             textView.setText(user.getEmail());
         }
+
+        userlogo = view.findViewById(R.id.userLogo);
+        userlogo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myIntent = new Intent(getActivity(), UserProfile.class);
+                startActivity(myIntent);
+            }
+        });
 
         return view;
     }

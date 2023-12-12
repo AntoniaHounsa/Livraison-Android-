@@ -7,6 +7,12 @@
     android:padding="8dp"
     android:background="#F4978E"
     android:gravity="center_vertical">
+    <ImageView
+        android:id="@+id/userLogo"
+        android:layout_width="40dp"
+        android:layout_height="match_parent"
+        android:src="@drawable/usericon"
+     />
 
     <TextView
         android:id="@+id/user_details"
@@ -28,4 +34,5 @@
         android:background="?attr/selectableItemBackground"
         android:clickable="true"
         android:focusable="true"/>
+
 </LinearLayout>

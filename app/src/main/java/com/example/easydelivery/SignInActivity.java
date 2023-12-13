@@ -94,7 +94,9 @@ public class SignInActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 progressBar.setVisibility(View.GONE);
                                 if (task.isSuccessful()) {
-                                    saveAdditionalUserData(email);
+                                    //je récupère l'UID pour connecter l'utilisateur dans firebase et firestore
+                                    String uid = mAuth.getCurrentUser().getUid();
+                                    saveAdditionalUserData(email, uid);
                                     Toast.makeText(SignInActivity.this, "Compte créer",
                                             Toast.LENGTH_SHORT).show();
 
@@ -114,7 +116,7 @@ public class SignInActivity extends AppCompatActivity {
             }
         });
     }
-    private void saveAdditionalUserData(String email) {
+    private void saveAdditionalUserData(String email, String uid) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         // Récupérez les autres champs (numéro de téléphone, rôle, etc.)
@@ -133,9 +135,9 @@ public class SignInActivity extends AppCompatActivity {
             user.put("truckNumber", truckNumber);
         }
 
-        db.collection("users").add(user)
-                .addOnSuccessListener(documentReference -> {
-                    // Données enregistrées avec succès
+        db.collection("users").document(uid).set(user)
+                .addOnSuccessListener(aVoid -> {
+                    //Toast.makeText(this,"Les données ont bien été enregistrer ");
                 })
                 .addOnFailureListener(e -> {
                     // Échec de l'enregistrement des données

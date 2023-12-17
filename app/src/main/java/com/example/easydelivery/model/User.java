@@ -1,4 +1,4 @@
-package com.example.easydelivery;
+package com.example.easydelivery.model;
 
 public class User {
     private String id;

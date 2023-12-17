@@ -15,6 +15,8 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.easydelivery.presenter.SignInPresenter;
+import com.example.easydelivery.uiContract.ISignInView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
@@ -26,21 +28,22 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SignInActivity extends AppCompatActivity {
+public class SignInActivity extends AppCompatActivity implements ISignInView {
     TextInputEditText editTextEmail, editTextPassword, editTextphoneNumber;
     Button signInButton;
-    FirebaseAuth mAuth;
     ProgressBar progressBar;
     TextView textViewForLogin;
     private RadioGroup roleRadioGroup;
     private EditText truckNumberEditText;
+    private SignInPresenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
-        mAuth = FirebaseAuth.getInstance();
+        presenter = new SignInPresenter(this);
+
         editTextEmail = findViewById(R.id.email);
         editTextPassword = findViewById(R.id.password);
         signInButton =  findViewById(R.id.SignInButton);
@@ -49,6 +52,7 @@ public class SignInActivity extends AppCompatActivity {
         editTextphoneNumber = findViewById(R.id.tel);
         roleRadioGroup = findViewById(R.id.roleRadioGroup);
         truckNumberEditText = findViewById(R.id.immatriculation);
+
 
         roleRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -69,81 +73,45 @@ public class SignInActivity extends AppCompatActivity {
                 finish();
             }
         });
-        signInButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                progressBar.setVisibility(View.VISIBLE);
-                String email, password;
-                email = editTextEmail.getText().toString();
-                password = editTextPassword.getText().toString();
-
-                if(TextUtils.isEmpty(email)){
-                    Toast.makeText(SignInActivity.this, "Entrer l'email" ,
-                                    Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if(TextUtils.isEmpty(password)){
-                    Toast.makeText(SignInActivity.this, "Entrer le mot de passe",
-                            Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                mAuth.createUserWithEmailAndPassword(email, password)
-                        .addOnCompleteListener( new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                progressBar.setVisibility(View.GONE);
-                                if (task.isSuccessful()) {
-                                    //je récupère l'UID pour connecter l'utilisateur dans firebase et firestore
-                                    String uid = mAuth.getCurrentUser().getUid();
-                                    saveAdditionalUserData(email, uid);
-                                    Toast.makeText(SignInActivity.this, "Compte créer",
-                                            Toast.LENGTH_SHORT).show();
-
-                                    Intent myIntent = new Intent(getApplicationContext(), LoginActivity.class);
-                                    startActivity(myIntent);
-                                    finish();
-
-                                } else {
-                                    // If sign in fails, display a message to the user.
-                                    Toast.makeText(SignInActivity.this, "Compte non créér",
-                                            Toast.LENGTH_SHORT).show();
-
-                                }
-                            }
-                        });
-
-            }
+        signInButton.setOnClickListener(v -> {
+            String email = editTextEmail.getText().toString();
+            String password = editTextPassword.getText().toString();
+            presenter.signIn(email, password);
         });
-    }
-    private void saveAdditionalUserData(String email, String uid) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        // Récupérez les autres champs (numéro de téléphone, rôle, etc.)
+    }
+
+
+    @Override
+    public void showProgress() {
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideProgress() {
+        progressBar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showSuccessMessage(String message) {
+        Toast.makeText(SignInActivity.this, message,
+                Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showErrorMessage(String message) {
+        Toast.makeText(SignInActivity.this, message ,
+                Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public String getPhoneNumber() {
         String phoneNumber = editTextphoneNumber.getText().toString();
-        String role = getSelectedRole();
-        String truckNumber = null;
-        if (role.equals("Chauffeur")) {
-            truckNumber = truckNumberEditText.getText().toString();
-        }
-
-        Map<String, Object> user = new HashMap<>();
-        user.put("email", email);
-        user.put("phoneNumber", phoneNumber);
-        user.put("role", role);
-        if (truckNumber != null) {
-            user.put("truckNumber", truckNumber);
-        }
-
-        db.collection("users").document(uid).set(user)
-                .addOnSuccessListener(aVoid -> {
-                    //Toast.makeText(this,"Les données ont bien été enregistrer ");
-                })
-                .addOnFailureListener(e -> {
-                    // Échec de l'enregistrement des données
-                });
+        return  phoneNumber;
     }
-    private String getSelectedRole() {
+
+    @Override
+    public String getRole() {
         int selectedRoleId = roleRadioGroup.getCheckedRadioButtonId();
         if (selectedRoleId == R.id.radioBuyer) {
             return "Acheteur";
@@ -156,4 +124,16 @@ public class SignInActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public String getTruckNumber() {
+        return truckNumberEditText.getText().toString();
+    }
+
+    @Override
+    public void navigateToLogin() {
+
+        Intent myIntent = new Intent(getApplicationContext(), LoginActivity.class);
+        startActivity(myIntent);
+        finish();
+    }
 }

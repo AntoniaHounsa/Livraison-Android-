@@ -24,17 +24,6 @@ public class LoginActivity extends AppCompatActivity {
     FirebaseAuth mAuth;
     ProgressBar progressBar;
 
-  /*  @Override
-    public void onStart() {
-        super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null){
-            Intent myIntent = new Intent(getApplicationContext(), AfterLogin.class);
-            startActivity(myIntent);
-            finish();
-        }
-    }*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

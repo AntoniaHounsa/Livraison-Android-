@@ -6,6 +6,17 @@ public class User {
     private String password;
     private String phoneNumber;
     private String truckNumber;
+    private String role;
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+
+    public String getRole() {
+        return role;
+    }
+
+
 
     public String getId() {
         return id;

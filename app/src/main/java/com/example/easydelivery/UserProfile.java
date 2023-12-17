@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class UserProfile extends AppCompatActivity {
-    TextInputEditText editTextEmail,editTextPassword, editTextphoneNumber;
+    TextInputEditText editTextEmail,editTextPassword, editTextphoneNumber, editTruckNumber;
     Button modifyButton;
     FirebaseUser firebaseUser ;
     FirebaseFirestore db ;
@@ -36,6 +36,7 @@ public class UserProfile extends AppCompatActivity {
         editTextEmail = findViewById(R.id.email);
         editTextphoneNumber = findViewById(R.id.tel);
         editTextPassword = findViewById(R.id.password);
+        editTruckNumber = findViewById(R.id.immatriculation);
 
         if (firebaseUser != null) {
             // Récupérer l'email depuis Firebase Auth
@@ -47,8 +48,13 @@ public class UserProfile extends AppCompatActivity {
                     .addOnSuccessListener(documentSnapshot -> {
                         if (documentSnapshot.exists()) {
                             User user = documentSnapshot.toObject(User.class);
-                            String currentPhoneNumber = user.getPhoneNumber();
-                            editTextphoneNumber.setText(currentPhoneNumber);
+
+                            editTextphoneNumber.setText(user.getPhoneNumber());
+
+                            if("Chauffeur".equals(user.getRole())){
+                                editTruckNumber.setVisibility(View.VISIBLE);
+                                editTruckNumber.setText(user.getTruckNumber());
+                            }
 
                         }
                         else {
@@ -68,6 +74,7 @@ public class UserProfile extends AppCompatActivity {
                 String newEmail = editTextEmail.getText().toString();
                 String newPhoneNumber = editTextphoneNumber.getText().toString();
                 String newPassword = editTextPassword.getText().toString();
+                String newTruckNumber = editTruckNumber.getText().toString();
 
                     // Mise à jour de l'adresse électronique dans Firebase Authentication
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -93,7 +100,7 @@ public class UserProfile extends AppCompatActivity {
                             user.updatePassword(newPassword)
                                     .addOnCompleteListener(task -> {
                                         if (task.isSuccessful()) {
-                                            // Mot de passe mis à jour avec succès
+
                                         }
                                     });
                         }
@@ -108,9 +115,20 @@ public class UserProfile extends AppCompatActivity {
                                     .addOnSuccessListener(aVoid -> Log.d(TAG, "User profile updated."))
                                     .addOnFailureListener(e -> Log.w(TAG, "Error updating profile", e));
                         }
+                        if (!TextUtils.isEmpty(newTruckNumber)){
+                            // Mise à jour du numéro de téléphone et d'autres informations dans Firestore
+                            FirebaseFirestore db = FirebaseFirestore.getInstance();
+                            Map<String, Object> updates = new HashMap<>();
+                            updates.put("truckNumber", newTruckNumber);
 
-                        // Pour mettre à jour le mot de passe
 
+                            db.collection("users").document(user.getUid()).update(updates)
+                                    .addOnSuccessListener(aVoid -> Log.d(TAG, "User profile updated."))
+                                    .addOnFailureListener(e -> Log.w(TAG, "Error updating profile", e));
+                        }
+
+
+                        Toast.makeText(UserProfile.this, "Mis à jour réussie", Toast.LENGTH_SHORT).show();
 
 
                     }

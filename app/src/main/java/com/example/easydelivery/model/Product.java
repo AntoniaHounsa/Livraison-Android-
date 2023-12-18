@@ -3,13 +3,26 @@ package com.example.easydelivery.model;
 public class Product {
     private String name;
     private long price;
+    private String photo;
 
-    public Product(String name, long price) {
-        this.name = name;
-        this.price = price;
+
+    public String getPhoto() {
+        return photo;
     }
 
+    public void setPhoto(String photo) {
+        this.photo = photo;
+    }
+
+
+
     public Product() {
+    }
+
+    public Product(String name, long price, String photo) {
+        this.name = name;
+        this.price = price;
+        this.photo = photo;
     }
 
     public String getName() {

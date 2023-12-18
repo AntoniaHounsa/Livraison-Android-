@@ -12,4 +12,5 @@
     <string name="mon_profil">Mon profil</string>
     <string name="enregistrer_les_modifications">Enregistrer les modifications</string>
     <string name="nouveau_mot_de_passe">Nouveau mot de passe</string>
+    <string name="kg">€/kg</string>
 </resources>

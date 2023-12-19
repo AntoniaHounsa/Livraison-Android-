@@ -21,16 +21,20 @@
         android:layout_height="wrap_content"
         android:text="Email utilisateur"
         android:gravity="start"
-        android:paddingStart="16dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
-
+    <ImageView
+        android:id="@+id/userCard"
+        android:layout_width="40dp"
+        android:layout_height="match_parent"
+        android:src="@drawable/panier"
+        />
     <Button
         android:id="@+id/logoutButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Déconnexion"
         android:gravity="end"
-        android:paddingEnd="16dp"
+        android:paddingEnd="8dp"
         android:background="?attr/selectableItemBackground"
         android:clickable="true"
         android:focusable="true"/>

@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 
 import com.example.easydelivery.LoginActivity;
 import com.example.easydelivery.SignInActivity;
+import com.example.easydelivery.model.Cart;
 import com.example.easydelivery.uiContract.ISignInView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -21,6 +22,7 @@ import java.util.Map;
 public class SignInPresenter implements ISignInPresenter {
     private ISignInView view;
     private FirebaseAuth mAuth;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     public SignInPresenter(ISignInView view) {
         this.view = view;
@@ -50,6 +52,7 @@ public class SignInPresenter implements ISignInPresenter {
                             //je récupère l'UID pour connecter l'utilisateur dans firebase et firestore
                             String uid = mAuth.getCurrentUser().getUid();
                             saveAdditionalUserData(email, uid);
+                            createAssociatedCart(uid);
                             view.hideProgress();
                             view.showSuccessMessage("Compte créer");
 
@@ -66,7 +69,7 @@ public class SignInPresenter implements ISignInPresenter {
 
     }
     private void saveAdditionalUserData(String email, String uid) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
 
         // Récupérez les autres champs (numéro de téléphone, rôle, etc.)
         String phoneNumber = view.getPhoneNumber();
@@ -90,6 +93,20 @@ public class SignInPresenter implements ISignInPresenter {
                 })
                 .addOnFailureListener(e -> {
                     // Échec de l'enregistrement des données
+                });
+    }
+    private void createAssociatedCart(String uid){
+        Cart myCart = new Cart();
+        myCart.setUserId(uid);
+
+        Map<String, Object> cart = new HashMap<>();
+        cart.put("userId", myCart.getUserId());
+        db.collection("carts").document(uid).set(cart)
+                .addOnSuccessListener(aVoid ->{
+
+                })
+                .addOnFailureListener(e ->{
+
                 });
     }
 

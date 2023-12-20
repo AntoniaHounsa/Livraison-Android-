@@ -5,6 +5,16 @@ public class Product {
     private long price;
     private String photo;
 
+    public long getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(long quantity) {
+        this.quantity = quantity;
+    }
+
+    private long quantity;
+
 
     public String getPhoto() {
         return photo;

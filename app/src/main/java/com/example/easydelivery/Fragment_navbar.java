@@ -21,7 +21,7 @@ public class Fragment_navbar extends Fragment {
     FirebaseUser user;
     TextView textView;
     FirebaseAuth auth;
-    ImageView userlogo;
+    ImageView userlogo, userCart;
 
 
     @Nullable
@@ -57,6 +57,15 @@ public class Fragment_navbar extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent myIntent = new Intent(getActivity(), UserProfile.class);
+                startActivity(myIntent);
+            }
+        });
+
+        userCart = view.findViewById(R.id.userCard);
+        userCart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myIntent = new Intent(getActivity(), UserCart.class);
                 startActivity(myIntent);
             }
         });

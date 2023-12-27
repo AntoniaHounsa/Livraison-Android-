@@ -26,13 +26,20 @@
             android:layout_gravity="center_horizontal"
             android:text="Mon panier"
             android:textColor="@color/black"
+            android:layout_marginTop="0dp"
             android:textSize="35sp"
             android:textStyle="bold" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="wrap_content" />
+        <Button
+            android:id="@+id/openOrderDialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Commander"
+            android:backgroundTint="#F4978E"/>
     </LinearLayout>
 
 </LinearLayout>

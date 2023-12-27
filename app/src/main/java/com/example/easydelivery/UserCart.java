@@ -8,9 +8,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import com.example.easydelivery.model.Cart;
 import com.example.easydelivery.model.Product;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
@@ -28,6 +31,8 @@ public class UserCart extends AppCompatActivity {
     ArrayList<Product> productArrayList;
     CartItemAdapter cartItemAdapter;
     ProgressDialog progressDialog;
+    Button openOrderDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +54,18 @@ public class UserCart extends AppCompatActivity {
         recyclerView.setAdapter(cartItemAdapter);
         // to retrieve data from firestore:
         EventChangeListener();
+
+        openOrderDialog = findViewById(R.id.openOrderDialog);
+
+        openOrderDialog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                OrderDialogFragment orderDialogFragment = new OrderDialogFragment();
+                orderDialogFragment.show(getSupportFragmentManager(),"MyFragment");
+            }
+        });
+
+
     }
 
     private void EventChangeListener() {

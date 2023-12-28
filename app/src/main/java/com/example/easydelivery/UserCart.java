@@ -60,7 +60,14 @@ public class UserCart extends AppCompatActivity {
         openOrderDialog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Créez un bundle pour contenir les produits
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("products", productArrayList); // Assurez-vous que la classe Product implémente Serializable
+
+
                 OrderDialogFragment orderDialogFragment = new OrderDialogFragment();
+                orderDialogFragment.setArguments(bundle); // Attribuez le bundle au fragment
+
                 orderDialogFragment.show(getSupportFragmentManager(),"MyFragment");
             }
         });

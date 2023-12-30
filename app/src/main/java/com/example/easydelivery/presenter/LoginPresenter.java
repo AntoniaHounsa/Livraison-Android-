@@ -15,6 +15,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class LoginPresenter implements ILoginPresenter{
     private ILoginView view;
@@ -24,34 +26,41 @@ public class LoginPresenter implements ILoginPresenter{
         mAuth = FirebaseAuth.getInstance();
     }
 
+
+
     @Override
     public void login(String email, String password) {
-        view.showProgress();
-
-
-        if(TextUtils.isEmpty(email)){
-           view.showErrorMessage("Entrer l'email");
-            return;
-        }
-        if(TextUtils.isEmpty(password)){
-           view.showErrorMessage("Entrer le mot de passe");
-            return;
-        }
-
+        // ... vérification de l'email et du mot de passe ...
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        view.hideProgress();
                         if (task.isSuccessful()) {
-                            view.showSuccessMessage("Connexion réussie");
-                            view.navigateToLogin();
+                            // Après une connexion réussie, obtenir l'UID de l'utilisateur connecté
+                            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                            // Effectuer une requête pour obtenir le rôle de l'utilisateur
+                            FirebaseFirestore.getInstance().collection("users").document(userId)
+                                    .get()
+                                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                            view.hideProgress();
+                                            if (task.isSuccessful() && task.getResult() != null) {
+                                                String role = task.getResult().getString("role");
+                                                // Passer le rôle à la méthode navigateToLogin
+                                                view.navigateToLogin(role);
+                                            } else {
+                                                view.showErrorMessage("Impossible de récupérer le rôle de l'utilisateur");
+                                            }
+                                        }
+                                    });
                         } else {
-                           view.showErrorMessage("Connexion échouée");
+                            view.hideProgress();
+                            view.showErrorMessage("Connexion échouée");
                         }
                     }
                 });
-
-
     }
+
+
 }

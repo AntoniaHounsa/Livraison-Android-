@@ -8,6 +8,9 @@ public class Order {
     private String deliveryDate;
     private String deliveryAddress;
 
+
+    private int status = 0;
+
     public Order(String userId, ArrayList<Product> products, String deliveryDate, String deliveryAddress) {
         this.userId = userId;
         this.products = products;
@@ -49,4 +52,13 @@ public class Order {
     public void setDeliveryAddress(String deliveryAddress) {
         this.deliveryAddress = deliveryAddress;
     }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
 }

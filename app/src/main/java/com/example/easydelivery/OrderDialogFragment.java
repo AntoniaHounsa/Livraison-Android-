@@ -14,8 +14,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.example.easydelivery.callback.AdresseVerificationCallback;
+import com.example.easydelivery.callback.CartUpdateListener;
+import com.example.easydelivery.model.Cart;
 import com.example.easydelivery.model.Order;
 import com.example.easydelivery.model.Product;
+import com.example.easydelivery.service.ApiGouvService;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
@@ -26,10 +30,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class OrderDialogFragment extends DialogFragment {
+public class OrderDialogFragment extends DialogFragment implements AdresseVerificationCallback {
     private TextInputEditText dateFieldTv, deliveryAdressTv;
     private Button validateOrderButton;
     private ArrayList<Product> products;
+    private CartUpdateListener cartUpdateListener;
+    private ApiGouvService apiGouvService = new ApiGouvService();
+    private  Order order ;
 
 
     @Nullable
@@ -80,9 +87,8 @@ public class OrderDialogFragment extends DialogFragment {
 
                 String address = deliveryAdressTv.getText().toString();
 
-                Order order = new Order(userId, products, date, address);
-
-                saveOrderToFirestore(order);
+                order = new Order(userId, products, date, address);
+                apiGouvService.verifierAdresse(address, OrderDialogFragment.this);
 
 
             }
@@ -124,7 +130,9 @@ public class OrderDialogFragment extends DialogFragment {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        // Le panier a été vidé avec succès
+                        if (cartUpdateListener != null) {
+                            cartUpdateListener.onCartCleared();
+                        }
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -133,6 +141,26 @@ public class OrderDialogFragment extends DialogFragment {
                         // Gérer l'erreur
                     }
                 });
+    }
+
+    public void setCartUpdateListener(CartUpdateListener receivedCartUpdateListener){
+        this.cartUpdateListener = receivedCartUpdateListener;
+    }
+
+    @Override
+    public void onAdresseVerified(boolean isValid) {
+        if (getActivity() == null) return;
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (isValid) {
+                    saveOrderToFirestore(order);
+                } else {
+                    Toast.makeText(getActivity(), "Adresse invalide", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 
 }

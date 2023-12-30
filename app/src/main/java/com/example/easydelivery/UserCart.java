@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.example.easydelivery.callback.CartUpdateListener;
 import com.example.easydelivery.model.Cart;
 import com.example.easydelivery.model.Product;
 import com.google.android.material.textfield.TextInputEditText;
@@ -25,7 +26,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
-public class UserCart extends AppCompatActivity {
+public class UserCart extends AppCompatActivity implements CartUpdateListener {
     RecyclerView recyclerView;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     ArrayList<Product> productArrayList;
@@ -67,7 +68,7 @@ public class UserCart extends AppCompatActivity {
 
                 OrderDialogFragment orderDialogFragment = new OrderDialogFragment();
                 orderDialogFragment.setArguments(bundle); // Attribuez le bundle au fragment
-
+                orderDialogFragment.setCartUpdateListener(UserCart.this);
                 orderDialogFragment.show(getSupportFragmentManager(),"MyFragment");
             }
         });
@@ -115,6 +116,17 @@ public class UserCart extends AppCompatActivity {
         //productArrayList.clear();
         productArrayList.addAll(products);
         cartItemAdapter.notifyDataSetChanged();
+
+        if(products.size() != 0){
+            openOrderDialog.setVisibility(View.VISIBLE);
+        }
     }
 
+    @Override
+    public void onCartCleared() {
+        productArrayList.clear();
+        cartItemAdapter.notifyDataSetChanged();
+            openOrderDialog.setVisibility(View.VISIBLE);
+
+    }
 }

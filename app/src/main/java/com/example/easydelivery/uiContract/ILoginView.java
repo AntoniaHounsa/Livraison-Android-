@@ -5,5 +5,5 @@ public interface ILoginView {
     void hideProgress();
     void showSuccessMessage(String message);
     void showErrorMessage(String message);
-    void navigateToLogin();
+    void navigateToLogin(String role);
 }

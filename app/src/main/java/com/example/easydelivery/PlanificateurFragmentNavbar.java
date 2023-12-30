@@ -13,22 +13,21 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class Fragment_navbar extends Fragment {
+public class PlanificateurFragmentNavbar extends Fragment {
     FirebaseUser user;
     TextView textView;
     FirebaseAuth auth;
-    ImageView userlogo, userCart, home;
+    ImageView userlogo, home;
 
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Je fais ça pour relier le fichier java à la vue xml
-        View view = inflater.inflate(R.layout.fragment_navbar, container, false);
+        View view = inflater.inflate(R.layout.planificateur_fragment_navbar, container, false);
 
         Button logoutButton = view.findViewById(R.id.logoutButton);
         logoutButton.setOnClickListener(new View.OnClickListener() {
@@ -55,7 +54,6 @@ public class Fragment_navbar extends Fragment {
         if (user == null){
             Intent myIntent = new Intent (getActivity(), LoginActivity.class);
             startActivity(myIntent);
-
         }
         else{
             textView.setText(user.getEmail());
@@ -66,15 +64,6 @@ public class Fragment_navbar extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent myIntent = new Intent(getActivity(), UserProfile.class);
-                startActivity(myIntent);
-            }
-        });
-
-        userCart = view.findViewById(R.id.userCard);
-        userCart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent myIntent = new Intent(getActivity(), UserCart.class);
                 startActivity(myIntent);
             }
         });

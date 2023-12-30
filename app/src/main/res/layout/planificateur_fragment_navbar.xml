@@ -13,14 +13,6 @@
         android:layout_weight="0.5"
         android:layout_height="match_parent"
         android:src="@drawable/homebg"
-    />
-    <ImageView
-        android:id="@+id/userCard"
-        android:layout_width="0dp"
-        android:layout_weight="0.5"
-        android:layout_height="match_parent"
-        android:src="@drawable/panier"
-        android:layout_margin="5dp"
         />
 
     <TextView
@@ -47,13 +39,11 @@
         android:id="@+id/logoutButton"
         android:layout_width="0dp"
         android:layout_weight="1"
-        android:layout_height="37dp"
+        android:layout_height="39dp"
         android:background="?attr/selectableItemBackground"
         android:clickable="true"
         android:focusable="true"
         android:paddingEnd="8dp"
         android:text="Logout" />
-
-
 
 </LinearLayout>

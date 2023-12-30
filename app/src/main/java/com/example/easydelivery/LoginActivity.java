@@ -76,9 +76,18 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
     }
 
     @Override
-    public void navigateToLogin() {
-        Intent myIntent = new Intent(getApplicationContext(), AfterLogin.class);
-        startActivity(myIntent);
-        finish();
+    public void navigateToLogin(String role) {
+
+        if("Acheteur".equals(role)){
+            Intent myIntent = new Intent(getApplicationContext(), AfterLogin.class);
+            startActivity(myIntent);
+            finish();
+        }
+        if("Planificateur".equals(role)){
+            Intent myIntent = new Intent(getApplicationContext(), AfterLogin.class);
+            startActivity(myIntent);
+            finish();
+        }
+
     }
 }

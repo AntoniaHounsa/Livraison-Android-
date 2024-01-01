@@ -84,7 +84,7 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
             finish();
         }
         if("Planificateur".equals(role)){
-            Intent myIntent = new Intent(getApplicationContext(), AfterLogin.class);
+            Intent myIntent = new Intent(getApplicationContext(), AfterLoginPlanificateur.class);
             startActivity(myIntent);
             finish();
         }

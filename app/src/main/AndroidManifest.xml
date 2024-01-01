@@ -15,6 +15,9 @@
         android:theme="@style/Theme.EasyDelivery"
         tools:targetApi="31">
         <activity
+            android:name=".AssignRoute"
+            android:exported="false" />
+        <activity
             android:name=".AfterLoginPlanificateur"
             android:exported="false" />
         <activity

@@ -1,17 +1,19 @@
 package com.example.easydelivery.model;
 
+import com.google.firebase.Timestamp;
+
 import java.util.ArrayList;
 
 public class Order {
     private String userId;
     private ArrayList<Product> products;
-    private String deliveryDate;
+    private Timestamp deliveryDate;
     private String deliveryAddress;
 
 
     private int status = 0;
 
-    public Order(String userId, ArrayList<Product> products, String deliveryDate, String deliveryAddress) {
+    public Order(String userId, ArrayList<Product> products, Timestamp deliveryDate, String deliveryAddress) {
         this.userId = userId;
         this.products = products;
         this.deliveryDate = deliveryDate;
@@ -37,11 +39,11 @@ public class Order {
         this.products = products;
     }
 
-    public String getDeliveryDate() {
+    public Timestamp getDeliveryDate() {
         return deliveryDate;
     }
 
-    public void setDeliveryDate(String deliveryDate) {
+    public void setDeliveryDate(Timestamp deliveryDate) {
         this.deliveryDate = deliveryDate;
     }
 

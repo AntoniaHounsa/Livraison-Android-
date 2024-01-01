@@ -23,12 +23,17 @@ import com.example.easydelivery.service.ApiGouvService;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 public class OrderDialogFragment extends DialogFragment implements AdresseVerificationCallback {
     private TextInputEditText dateFieldTv, deliveryAdressTv;
@@ -87,7 +92,9 @@ public class OrderDialogFragment extends DialogFragment implements AdresseVerifi
 
                 String address = deliveryAdressTv.getText().toString();
 
-                order = new Order(userId, products, date, address);
+
+
+                order = new Order(userId, products, convertDateTvToTimeStamp(date), address);
                 apiGouvService.verifierAdresse(address, OrderDialogFragment.this);
 
 
@@ -162,5 +169,19 @@ public class OrderDialogFragment extends DialogFragment implements AdresseVerifi
             }
         });
     }
+
+    public Timestamp convertDateTvToTimeStamp(String dateString){
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        try {
+            Date date = formatter.parse(dateString);
+            return new com.google.firebase.Timestamp(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            // Afficher un message d'erreur approprié si vous êtes dans un contexte où cela est possible
+            // Sinon, vous pourriez vouloir renvoyer null ou lever une exception personnalisée
+        }
+        return null; // Renvoie null si le parsing de la date échoue
+    }
+
 
 }

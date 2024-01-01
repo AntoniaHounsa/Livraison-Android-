@@ -6,8 +6,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import com.example.easydelivery.model.Order;
 import com.google.firebase.firestore.DocumentChange;
@@ -25,6 +28,7 @@ public class AfterLoginPlanificateur extends AppCompatActivity {
     OrderItemAdapter orderItemAdapter;
     FirebaseFirestore db;
     ProgressDialog progressDialog ;
+    Button assignRouteButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +53,17 @@ public class AfterLoginPlanificateur extends AppCompatActivity {
         recyclerView.setAdapter(orderItemAdapter);
 
         EventChangeListener();
+
+        assignRouteButton = findViewById(R.id.assignRoute);
+        assignRouteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myIntent = new Intent(getApplicationContext(), AssignRoute.class);
+                startActivity(myIntent);
+                finish();
+            }
+        });
+
 
     }
 

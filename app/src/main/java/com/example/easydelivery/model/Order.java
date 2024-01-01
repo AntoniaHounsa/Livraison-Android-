@@ -9,9 +9,19 @@ public class Order {
     private ArrayList<Product> products;
     private Timestamp deliveryDate;
     private String deliveryAddress;
+    private transient boolean isSelected= false;
+
+    private boolean isAllocated = false;
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
 
 
-    private int status = 0;
 
     public Order(String userId, ArrayList<Product> products, Timestamp deliveryDate, String deliveryAddress) {
         this.userId = userId;
@@ -55,12 +65,12 @@ public class Order {
         this.deliveryAddress = deliveryAddress;
     }
 
-    public int getStatus() {
-        return status;
+    public boolean getIsAllocated() {
+        return isAllocated;
     }
 
-    public void setStatus(int status) {
-        this.status = status;
+    public void setIsAllocated(boolean isAllocated) {
+        this.isAllocated = isAllocated;
     }
 
 }

@@ -51,8 +51,13 @@ public class AssignRouteItemsAdapter extends RecyclerView.Adapter<AssignRouteIte
 
         holder.deliveryAdress.setText(order.getDeliveryAddress());
 
-        holder.checkBox.setOnClickListener(v ->{
-            order.setSelected(!order.isSelected());
+        // Réinitialiser l'état de la case à cocher
+        holder.checkBox.setChecked(order.isSelected());
+
+        holder.checkBox.setOnClickListener(v -> {
+            boolean currentState = order.isSelected();
+            order.setSelected(!currentState);
+            holder.checkBox.setChecked(!currentState);
         });
     }
 
@@ -73,5 +78,16 @@ public class AssignRouteItemsAdapter extends RecyclerView.Adapter<AssignRouteIte
             checkBox = itemView.findViewById(R.id.checkBox);
         }
     }
+
+    public ArrayList<Order> getSelectedOrders() {
+        ArrayList<Order> selectedOrders = new ArrayList<>();
+        for (Order order : orderArrayList) {
+            if (order.isSelected()) {
+                selectedOrders.add(order);
+            }
+        }
+        return selectedOrders;
+    }
+
 }
 

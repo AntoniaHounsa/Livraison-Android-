@@ -68,7 +68,9 @@ public class AfterLoginPlanificateur extends AppCompatActivity {
     }
 
     private void EventChangeListener(){
-        db.collection("orders").orderBy("deliveryDate")
+        db.collection("orders")
+                .whereEqualTo("isAllocated",false)
+                .orderBy("deliveryDate")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {

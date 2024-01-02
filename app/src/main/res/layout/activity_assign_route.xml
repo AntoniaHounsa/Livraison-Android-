@@ -35,11 +35,17 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"></Spinner>
-
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sélectionnez les livraisons constituants l'itinéraire du chauffeur sélectionné"
+        android:textSize="10sp"
+        android:layout_marginLeft="20dp"
+        android:layout_gravity ="top"></TextView>
     <LinearLayout
         android:layout_width="match_parent"
         android:orientation="vertical"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         tools:context=".AssignRoute">
 
 
@@ -47,5 +53,16 @@
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+
     </LinearLayout>
+
+    <Button
+        android:id="@+id/confirm_assign_route"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:backgroundTint="#F4978E"
+        android:text="Affecter l'itinéraire"/>
+
+
 </LinearLayout>

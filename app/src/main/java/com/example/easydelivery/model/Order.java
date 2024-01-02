@@ -12,6 +12,16 @@ public class Order {
     private transient boolean isSelected= false;
 
     private boolean isAllocated = false;
+    private transient String orderId;
+
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
+    }
+
 
     public boolean isSelected() {
         return isSelected;

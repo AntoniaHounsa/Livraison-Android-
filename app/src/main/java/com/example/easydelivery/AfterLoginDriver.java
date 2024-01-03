@@ -56,6 +56,7 @@ public class AfterLoginDriver extends AppCompatActivity {
         String userMail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         db.collection("missions")
                 .whereEqualTo("driverEmail",userMail)
+                .whereEqualTo("status", "EN_ATTENTE")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -67,8 +68,10 @@ public class AfterLoginDriver extends AppCompatActivity {
                             return;
                         }
                         for(DocumentChange dc : value.getDocumentChanges()){
-                            if(dc.getType() == DocumentChange.Type.ADDED){
-                                missionArrayList.add(dc.getDocument().toObject(Mission.class));
+                            if(dc.getType() == DocumentChange.Type.ADDED || dc.getType() == DocumentChange.Type.MODIFIED){
+                                Mission mission = dc.getDocument().toObject(Mission.class);
+                                mission.setMissionId(dc.getDocument().getId()); // Set the missionId
+                                missionArrayList.add(mission);
                             }
                             missionItemAdapter.notifyDataSetChanged();
                             if(progressDialog.isShowing()){

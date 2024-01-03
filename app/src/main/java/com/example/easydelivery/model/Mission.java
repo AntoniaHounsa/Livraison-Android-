@@ -3,9 +3,31 @@ package com.example.easydelivery.model;
 import java.util.ArrayList;
 
 public class Mission {
+
+    private String missionId;
     private String driverEmail;
-    private boolean isAcceptdeByDriver=false;
+    private Status status= Status.EN_ATTENTE;
     private ArrayList<Order> route = new ArrayList<>();
+
+
+    public String getMissionId() {
+        return missionId;
+    }
+
+    public void setMissionId(String missionId) {
+        this.missionId = missionId;
+    }
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+
+
+
 
     public Mission() {
     }
@@ -24,13 +46,7 @@ public class Mission {
         this.driverEmail = driverEmail;
     }
 
-    public boolean isAcceptdeByDriver() {
-        return isAcceptdeByDriver;
-    }
 
-    public void setAcceptdeByDriver(boolean acceptdeByDriver) {
-        isAcceptdeByDriver = acceptdeByDriver;
-    }
 
     public ArrayList<Order> getRoute() {
         return route;
@@ -38,5 +54,10 @@ public class Mission {
 
     public void setRoute(ArrayList<Order> route) {
         this.route = route;
+    }
+
+
+    public enum Status {
+        EN_ATTENTE, ACCEPTEE, EN_COURS, REFUSEE, TERMINEE
     }
 }

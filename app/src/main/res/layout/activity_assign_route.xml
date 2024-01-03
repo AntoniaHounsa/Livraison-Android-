@@ -31,10 +31,13 @@
 
     <Spinner
         android:id="@+id/driverMail"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"></Spinner>
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="20dp"
+        android:minHeight="30dp"
+        ></Spinner>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

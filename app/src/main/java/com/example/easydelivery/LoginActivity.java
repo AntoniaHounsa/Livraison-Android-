@@ -88,6 +88,11 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
             startActivity(myIntent);
             finish();
         }
+        if("Chauffeur".equals(role)){
+            Intent myIntent = new Intent(getApplicationContext(), AfterLoginDriver.class);
+            startActivity(myIntent);
+            finish();
+        }
 
     }
 }

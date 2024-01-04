@@ -1,6 +1,7 @@
 package com.example.easydelivery.model;
 
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.GeoPoint;
 
 import java.util.ArrayList;
 
@@ -9,6 +10,16 @@ public class Order {
     private ArrayList<Product> products;
     private Timestamp deliveryDate;
     private String deliveryAddress;
+
+    public com.google.firebase.firestore.GeoPoint getGeoCoordinates() {
+        return geoCoordinates;
+    }
+
+    public void setGeoCoordinates(com.google.firebase.firestore.GeoPoint geoCoordinates) {
+        this.geoCoordinates = geoCoordinates;
+    }
+
+    private GeoPoint geoCoordinates;
     private transient boolean isSelected= false;
 
     private boolean isAllocated = false;

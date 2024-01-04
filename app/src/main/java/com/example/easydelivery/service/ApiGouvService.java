@@ -35,21 +35,26 @@ public class ApiGouvService {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
-                adresseVerificationCallback.onAdresseVerified(false);
+                adresseVerificationCallback.onAdresseVerified(false, null);
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (!response.isSuccessful()) {
-                    adresseVerificationCallback.onAdresseVerified(false);
+                    adresseVerificationCallback.onAdresseVerified(false, null);
                 } else {
                     String responseData = response.body().string();
                     Gson gson = new Gson();
                     AdresseResponse adresseResponse = gson.fromJson(responseData, AdresseResponse.class);
 
                     boolean isValid = adresseResponse.isAdresseExistante(adresse);
-                    adresseVerificationCallback.onAdresseVerified(isValid);
-                }
+                    if (isValid && !adresseResponse.getFeatures().isEmpty()) {
+                        // Supposons que le premier élément est l'adresse correcte
+                        AdresseResponse.Feature.Geometry geometry = adresseResponse.getFeatures().get(0).getGeometry();
+                        adresseVerificationCallback.onAdresseVerified(true, geometry);
+                    } else {
+                        adresseVerificationCallback.onAdresseVerified(false, null);
+                    }                }
             }
         });
     }

@@ -31,6 +31,14 @@ public class AdresseResponse {
     }
 
     public static class Feature {
+        public Geometry getGeometry() {
+            return geometry;
+        }
+
+        public void setGeometry(Geometry geometry) {
+            this.geometry = geometry;
+        }
+
         private Geometry geometry;
 
         public Properties getProperties() {
@@ -42,9 +50,17 @@ public class AdresseResponse {
 
         public static class Geometry {
             private String type;
+
+            public List<Double> getCoordinates() {
+                return coordinates;
+            }
+
+            public void setCoordinates(List<Double> coordinates) {
+                this.coordinates = coordinates;
+            }
+
             private List<Double> coordinates;
 
-            // ... getters et setters pour type et coordinates ...
         }
 
         public static class Properties {

@@ -20,6 +20,7 @@ import com.example.easydelivery.model.Cart;
 import com.example.easydelivery.model.Order;
 import com.example.easydelivery.model.Product;
 import com.example.easydelivery.service.ApiGouvService;
+import com.example.easydelivery.service.entity.AdresseResponse;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
@@ -27,6 +28,7 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -155,13 +157,15 @@ public class OrderDialogFragment extends DialogFragment implements AdresseVerifi
     }
 
     @Override
-    public void onAdresseVerified(boolean isValid) {
+    public void onAdresseVerified(boolean isValid, AdresseResponse.Feature.Geometry geometry) {
         if (getActivity() == null) return;
 
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (isValid) {
+                    // Ajouter le géocode à l'objet commande
+                    order.setGeoCoordinates(new GeoPoint(geometry.getCoordinates().get(1), geometry.getCoordinates().get(0)));
                     saveOrderToFirestore(order);
                 } else {
                     Toast.makeText(getActivity(), "Adresse invalide", Toast.LENGTH_LONG).show();

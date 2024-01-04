@@ -20,7 +20,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 
 
-public class OnGoing extends AppCompatActivity {
+public class OnGoing extends AppCompatActivity  implements OnMissionItemClickListener {
 
     RecyclerView recyclerView;
     ArrayList<Mission> missionArrayList;
@@ -45,7 +45,7 @@ public class OnGoing extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
         missionArrayList = new ArrayList<Mission>();
-        missionItemAdapter = new MissionOnGoingItemAdapter(OnGoing.this, missionArrayList);
+        missionItemAdapter = new MissionOnGoingItemAdapter(OnGoing.this, missionArrayList,this);
 
         recyclerView.setAdapter(missionItemAdapter);
         EventChangeListener();
@@ -82,5 +82,13 @@ public class OnGoing extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    @Override
+    public void onMissionItemClick(int position) {
+        // Handle the click event, start a new Activity
+        Intent intent = new Intent(this, ShowRoute.class);
+        intent.putExtra("MissionPosition", position); // Pass data
+        startActivity(intent);
     }
 }

@@ -23,10 +23,13 @@ public class MissionOnGoingItemAdapter extends RecyclerView.Adapter<MissionOnGoi
 
     Context context;
     ArrayList<Mission> missionArrayList;
+    private OnMissionItemClickListener listener;
 
-    public MissionOnGoingItemAdapter(Context context, ArrayList<Mission> missionArrayList) {
+    // Constructor
+    public MissionOnGoingItemAdapter(Context context, ArrayList<Mission> missionArrayList, OnMissionItemClickListener listener) {
         this.context = context;
         this.missionArrayList = missionArrayList;
+        this.listener = listener;
     }
 
     @NonNull
@@ -46,22 +49,16 @@ public class MissionOnGoingItemAdapter extends RecyclerView.Adapter<MissionOnGoi
         holder.ordersRecyclerView.setLayoutManager(new LinearLayoutManager(context));
         holder.ordersRecyclerView.setAdapter(orderAdapter);
 
+        // Set OnClickListener
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onMissionItemClick(position);
+            }
+        });
 
     }
-    private void updateMissionIndbwhenACCEPTED(Mission mission){
-        // Mettre à jour la base de données Firebase
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("missions").document(mission.getMissionId())
-                .update("status", Mission.Status.ACCEPTEE.toString())
-                .addOnSuccessListener(aVoid -> {
-                    missionArrayList.remove(mission); // Mettre à jour la liste locale
-                    notifyDataSetChanged(); // Notifier l'adapter du changement
-                    Toast.makeText(context, "Mission acceptée", Toast.LENGTH_SHORT).show();
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(context, "Échec de la mise à jour de la mission", Toast.LENGTH_SHORT).show();
-                });
-    }
+
 
     @Override
     public int getItemCount() {
@@ -71,7 +68,6 @@ public class MissionOnGoingItemAdapter extends RecyclerView.Adapter<MissionOnGoi
     public static class MyViewHolder extends RecyclerView.ViewHolder{
         TextView missionNumber;
         RecyclerView ordersRecyclerView;
-        Button acceptButton, rejectButton;
 
 
         public MyViewHolder(@NonNull View itemView) {

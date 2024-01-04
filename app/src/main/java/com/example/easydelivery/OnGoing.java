@@ -4,39 +4,35 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-
 import com.example.easydelivery.model.Mission;
-import com.example.easydelivery.model.Order;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
-
 import java.util.ArrayList;
 
-public class AfterLoginDriver extends AppCompatActivity {
+
+public class OnGoing extends AppCompatActivity {
 
     RecyclerView recyclerView;
     ArrayList<Mission> missionArrayList;
-    MissionItemAdapter missionItemAdapter;
+    MissionOnGoingItemAdapter missionItemAdapter;
     FirebaseFirestore db;
     FirebaseAuth dbAuth;
     ProgressDialog progressDialog ;
-    Button onGoing;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_after_login_driver);
+        setContentView(R.layout.activity_on_going);
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
@@ -49,20 +45,12 @@ public class AfterLoginDriver extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
         missionArrayList = new ArrayList<Mission>();
-        missionItemAdapter = new MissionItemAdapter(AfterLoginDriver.this, missionArrayList);
+        missionItemAdapter = new MissionOnGoingItemAdapter(OnGoing.this, missionArrayList);
 
         recyclerView.setAdapter(missionItemAdapter);
         EventChangeListener();
 
-        onGoing = findViewById(R.id.onGoing);
-        onGoing.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), OnGoing.class);
-                startActivity(intent);
-                finish();
-            }
-        });
+
 
     }
 
@@ -70,7 +58,7 @@ public class AfterLoginDriver extends AppCompatActivity {
         String userMail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         db.collection("missions")
                 .whereEqualTo("driverEmail",userMail)
-                .whereEqualTo("status", "EN_ATTENTE")
+                .whereEqualTo("status", "ACCEPTEE")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -94,6 +82,5 @@ public class AfterLoginDriver extends AppCompatActivity {
                         }
                     }
                 });
-
     }
 }

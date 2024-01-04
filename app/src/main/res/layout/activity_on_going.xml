@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AfterLoginDriver"
+    tools:context=".OnGoing"
     android:orientation="vertical">
 
     <androidx.fragment.app.FragmentContainerView
@@ -12,18 +12,11 @@
         android:name="com.example.easydelivery.PlanificateurFragmentNavbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-    <Button
-        android:id="@+id/onGoing"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:backgroundTint="#F4978E"
-        android:text="En cours..."/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Missions en attente ..."
+        android:text="Missions en cours ..."
         android:layout_gravity="center_horizontal"
         android:textStyle="bold"
         android:textSize="17dp"/>

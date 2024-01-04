@@ -15,6 +15,9 @@
         android:theme="@style/Theme.EasyDelivery"
         tools:targetApi="31">
         <activity
+            android:name=".OnGoing"
+            android:exported="false" />
+        <activity
             android:name=".AfterLoginDriver"
             android:exported="false" />
         <activity

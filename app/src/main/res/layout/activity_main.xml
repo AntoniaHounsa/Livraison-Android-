@@ -1,39 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:background="#FFFFFF"
+    android:padding="16dp">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="126dp"
-        android:layout_marginTop="94dp"
-        android:text="Welcome to EasyDelivery"
-       />
+<TextView
+android:id="@+id/textView"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="Welcome to EasyDelivery"
+android:textSize="24sp"
+android:textColor="#F4978E"
+android:layout_centerHorizontal="true"
+android:layout_marginTop="100dp" />
 
-    <Button
-        android:id="@+id/SignInButton"
-        android:layout_width="214dp"
-        android:layout_height="64dp"
-        android:layout_marginStart="86dp"
-        android:layout_marginTop="90dp"
-        android:layout_marginEnd="111dp"
-        android:layout_marginBottom="464dp"
-        android:text="S'inscrire"
-        android:layout_below="@+id/loginButton" />
+<Button
+android:id="@+id/loginButton"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:text="Se connecter"
+android:layout_marginTop="30dp"
+android:layout_below="@+id/textView"
+android:backgroundTint="#F4978E"
+android:layout_marginLeft="30dp"
+android:layout_marginRight="30dp"
+android:textColor="#FFFFFF" />
 
-    <Button
-        android:id="@+id/loginButton"
-        android:layout_width="217dp"
-        android:layout_height="65dp"
-        android:layout_marginStart="86dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="104dp"
-        android:text="Se connecter"
-        android:layout_below="@+id/textView"
-        />
-</RelativeLayout>
+<Button
+android:id="@+id/SignInButton"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:text="S'inscrire"
+android:layout_below="@+id/loginButton"
+android:backgroundTint="#F4978E"
+android:layout_marginTop="16dp"
+android:layout_marginLeft="30dp"
+android:layout_marginRight="30dp"
+android:textColor="#FFFFFF" />
+    </RelativeLayout>

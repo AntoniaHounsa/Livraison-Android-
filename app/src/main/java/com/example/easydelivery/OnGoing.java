@@ -8,8 +8,8 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
+
+import com.example.easydelivery.callback.OnMissionItemClickListener;
 import com.example.easydelivery.model.Mission;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentChange;
@@ -17,6 +17,9 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import org.osmdroid.util.GeoPoint;
+
 import java.util.ArrayList;
 
 
@@ -85,10 +88,10 @@ public class OnGoing extends AppCompatActivity  implements OnMissionItemClickLis
     }
 
     @Override
-    public void onMissionItemClick(int position) {
+    public void onMissionItemClick(int position, ArrayList<GeoPoint> geoPointArrayList) {
         // Handle the click event, start a new Activity
         Intent intent = new Intent(this, ShowRoute.class);
-        intent.putExtra("MissionPosition", position); // Pass data
+        intent.putExtra("adresseGeocodeList", geoPointArrayList);
         startActivity(intent);
     }
 }

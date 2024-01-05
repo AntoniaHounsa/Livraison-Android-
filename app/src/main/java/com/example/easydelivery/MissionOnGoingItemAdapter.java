@@ -4,17 +4,17 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.easydelivery.callback.OnMissionItemClickListener;
 import com.example.easydelivery.model.Mission;
 import com.example.easydelivery.model.Order;
-import com.google.firebase.firestore.FirebaseFirestore;
+
+import org.osmdroid.util.GeoPoint;
 
 import java.util.ArrayList;
 
@@ -53,12 +53,23 @@ public class MissionOnGoingItemAdapter extends RecyclerView.Adapter<MissionOnGoi
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onMissionItemClick(position);
+                ArrayList<GeoPoint> adresseGeocodeList = new ArrayList<>();
+                //point de déoart
+                GeoPoint esigelc = new GeoPoint(49.383430, 1.0773341);
+                adresseGeocodeList.add(esigelc);
+                for(Order o : mission.getRoute()){
+                    adresseGeocodeList.add(convertFirestoreGeoPointToOSMGeoPoint(o.getGeoCoordinates()));
+                }
+                listener.onMissionItemClick(position,adresseGeocodeList);
+
             }
         });
 
     }
 
+    private GeoPoint convertFirestoreGeoPointToOSMGeoPoint(com.google.firebase.firestore.GeoPoint firestoreGeoPoint) {
+        return new GeoPoint(firestoreGeoPoint.getLatitude(), firestoreGeoPoint.getLongitude());
+    }
 
     @Override
     public int getItemCount() {

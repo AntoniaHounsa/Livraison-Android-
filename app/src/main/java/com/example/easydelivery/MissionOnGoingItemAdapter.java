@@ -60,7 +60,7 @@ public class MissionOnGoingItemAdapter extends RecyclerView.Adapter<MissionOnGoi
                 for(Order o : mission.getRoute()){
                     adresseGeocodeList.add(convertFirestoreGeoPointToOSMGeoPoint(o.getGeoCoordinates()));
                 }
-                listener.onMissionItemClick(position,adresseGeocodeList);
+                listener.onMissionItemClick(mission.getMissionId(),adresseGeocodeList);
 
             }
         });

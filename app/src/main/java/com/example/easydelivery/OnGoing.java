@@ -72,26 +72,36 @@ public class OnGoing extends AppCompatActivity  implements OnMissionItemClickLis
                             Log.e("Firesore error", error.getMessage());
                             return;
                         }
-                        for(DocumentChange dc : value.getDocumentChanges()){
-                            if(dc.getType() == DocumentChange.Type.ADDED || dc.getType() == DocumentChange.Type.MODIFIED){
-                                Mission mission = dc.getDocument().toObject(Mission.class);
-                                mission.setMissionId(dc.getDocument().getId()); // Set the missionId
-                                missionArrayList.add(mission);
+                        if(value != null && !value.isEmpty()){
+                            for(DocumentChange dc : value.getDocumentChanges()){
+                                if(dc.getType() == DocumentChange.Type.ADDED || dc.getType() == DocumentChange.Type.MODIFIED){
+                                    Mission mission = dc.getDocument().toObject(Mission.class);
+                                    mission.setMissionId(dc.getDocument().getId()); // Set the missionId
+                                    missionArrayList.add(mission);
+                                }
+
                             }
-                            missionItemAdapter.notifyDataSetChanged();
+                        }else{
                             if(progressDialog.isShowing()){
                                 progressDialog.dismiss();
                             }
                         }
+                        missionItemAdapter.notifyDataSetChanged();
+                        if(progressDialog.isShowing()){
+                            progressDialog.dismiss();
+                        }
+
                     }
                 });
     }
 
     @Override
-    public void onMissionItemClick(int position, ArrayList<GeoPoint> geoPointArrayList) {
+    public void onMissionItemClick(String missionId, ArrayList<GeoPoint> geoPointArrayList) {
         // Handle the click event, start a new Activity
+        System.out.println("Liste d'adresse :" + geoPointArrayList);
         Intent intent = new Intent(this, ShowRoute.class);
         intent.putExtra("adresseGeocodeList", geoPointArrayList);
+        intent.putExtra("missionId", missionId);
         startActivity(intent);
     }
 }

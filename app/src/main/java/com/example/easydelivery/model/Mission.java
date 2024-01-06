@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Mission {
 
-    private String missionId;
+    private transient String missionId;
     private String driverEmail;
     private Status status= Status.EN_ATTENTE;
     private ArrayList<Order> route = new ArrayList<>();

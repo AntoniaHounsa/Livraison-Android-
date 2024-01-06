@@ -1,14 +1,22 @@
 package com.example.easydelivery;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.easydelivery.service.RouteService;
 import com.example.easydelivery.service.entity.RouteStep;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.json.JSONException;
 import org.osmdroid.api.IMapController;
@@ -25,6 +33,8 @@ import java.util.ArrayList;
 public class ShowRoute extends AppCompatActivity {
     private MapView map;
     private IMapController mapController;
+    Button finishMission;
+    FirebaseFirestore db;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,31 +93,52 @@ public class ShowRoute extends AppCompatActivity {
                 TextView textViewDurations = findViewById(R.id.textViewDurations); // votre TextView
 
         // Appeler le service et traiter la réponse
-        try {
-            routeService.getRouteInfo(geoPoints, new RouteService.RouteInfoCallback() {
-                @Override
-                public void onSuccess(ArrayList<RouteStep> routeSteps) {
-                    StringBuilder infoText = new StringBuilder();
-                    int stepNumber = 1; // Initialiser le compteur d'étapes
+        routeService.getRouteInfo(geoPoints, new RouteService.RouteInfoCallback() {
+            @Override
+            public void onSuccess(ArrayList<RouteStep> routeSteps) {
+                StringBuilder infoText = new StringBuilder();
 
-                    for (RouteStep step : routeSteps) {
-                        infoText.append("Étape ").append(stepNumber).append(" : ")
-                                .append("Durée: ").append(step.getDuration()).append(" min, ")
-                                .append("Distance: ").append(step.getDistance()).append(" km\n");
-                        stepNumber++; // Incrémenter le compteur pour la prochaine étape
-                    }
-                    runOnUiThread(() -> textViewDurations.setText(infoText.toString()));
+                for (int i=0; i< routeSteps.size(); i++) {
+                    infoText.append("Étape ").append(i+1).append(" : ")
+                            .append("Durée: ").append(routeSteps.get(i).getDuration()).append(" min, ")
+                            .append("Distance: ").append(routeSteps.get(i).getDistance()).append(" km\n");
                 }
+                runOnUiThread(() -> textViewDurations.setText(infoText.toString()));
+            }
 
-                @Override
-                public void onFailure(String errorMessage) {
-                    runOnUiThread(() -> textViewDurations.setText("Erreur: " + errorMessage));
-                }
-            });
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
+            @Override
+            public void onFailure(String errorMessage) {
+                runOnUiThread(() -> textViewDurations.setText("Erreur: " + errorMessage));
+            }
+        });
 
+        finishMission = findViewById(R.id.finishMission);
+        String missionId = getIntent().getStringExtra("missionId");
+        db = FirebaseFirestore.getInstance();
+        finishMission.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                db.collection("missions").document(missionId)
+                        .update("status", "TERMINE")
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                // Traitement en cas de succès, par exemple afficher un message
+                                Toast.makeText(getApplicationContext(), "Mission terminée avec succès", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(getApplicationContext(), OnGoing.class);
+                                startActivity(intent);
+                                finish();
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                // Traitement en cas d'échec, par exemple afficher un message d'erreur
+                                Toast.makeText(getApplicationContext(), "Erreur lors de la mise à jour", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+            }
+        });
     }
 
 }

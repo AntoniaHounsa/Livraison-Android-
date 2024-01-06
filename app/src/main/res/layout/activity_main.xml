@@ -5,37 +5,48 @@
     android:background="#FFFFFF"
     android:padding="16dp">
 
-<TextView
-android:id="@+id/textView"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:text="Welcome to EasyDelivery"
-android:textSize="24sp"
-android:textColor="#F4978E"
-android:layout_centerHorizontal="true"
-android:layout_marginTop="100dp" />
+    <ImageView
+        android:id="@+id/imageViewHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:contentDescription="@string/app_name"
+        android:scaleType="centerCrop"
+        android:layout_marginTop="30dp"
+        android:src="@drawable/homepageimg" />
 
-<Button
-android:id="@+id/loginButton"
-android:layout_width="match_parent"
-android:layout_height="wrap_content"
-android:text="Se connecter"
-android:layout_marginTop="30dp"
-android:layout_below="@+id/textView"
-android:backgroundTint="#F4978E"
-android:layout_marginLeft="30dp"
-android:layout_marginRight="30dp"
-android:textColor="#FFFFFF" />
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Welcome to EasyDelivery"
+        android:textSize="24sp"
+        android:textColor="#F4978E"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/imageViewHeader"
+        android:layout_marginTop="20dp" />
 
-<Button
-android:id="@+id/SignInButton"
-android:layout_width="match_parent"
-android:layout_height="wrap_content"
-android:text="S'inscrire"
-android:layout_below="@+id/loginButton"
-android:backgroundTint="#F4978E"
-android:layout_marginTop="16dp"
-android:layout_marginLeft="30dp"
-android:layout_marginRight="30dp"
-android:textColor="#FFFFFF" />
-    </RelativeLayout>
+    <Button
+        android:id="@+id/loginButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Se connecter"
+        android:backgroundTint="#F4978E"
+        android:layout_below="@id/textView"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:textColor="#FFFFFF" />
+
+    <Button
+        android:id="@+id/SignInButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="S'inscrire"
+        android:backgroundTint="#F4978E"
+        android:layout_below="@id/loginButton"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:textColor="#FFFFFF" />
+</RelativeLayout>

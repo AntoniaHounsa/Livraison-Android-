@@ -5,7 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.widget.TextView;
 
+import com.example.easydelivery.service.RouteService;
+import com.example.easydelivery.service.entity.RouteStep;
+
+import org.json.JSONException;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
@@ -49,7 +54,8 @@ public class ShowRoute extends AppCompatActivity {
         Marker startMarker = new Marker(map);
         startMarker.setPosition(geoPoints.get(0));
         startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-        startMarker.setIcon(getResources().getDrawable(R.drawable.ic_warehouse)); // icône personnalisée pour l'entrepôt
+        startMarker.setIcon(getResources().getDrawable(R.drawable.ic_warehouse));
+        startMarker.setTitle("Départ (entrepot)");
         map.getOverlays().add(startMarker);
 
 
@@ -59,13 +65,49 @@ public class ShowRoute extends AppCompatActivity {
             Marker deliveryMarker = new Marker(map);
             deliveryMarker.setPosition(geoPoints.get(i));
             deliveryMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-            deliveryMarker.setIcon(getResources().getDrawable(R.drawable.ic_delivery)); // icône personnalisée pour la livraison
+            deliveryMarker.setIcon(getResources().getDrawable(R.drawable.ic_delivery));
+            deliveryMarker.setTitle("Livraison "+ i);
             map.getOverlays().add(deliveryMarker);
         }
+
+
 
         //centrer la carte sur le premier point
         GeoPoint esigelc = new GeoPoint(49.383430, 1.0773341);
         mapController.setCenter(esigelc);
+
+
+        // Récupérer les GeoPoints et initialiser le service
+        RouteService routeService = new RouteService();
+
+                TextView textViewDurations = findViewById(R.id.textViewDurations); // votre TextView
+
+        // Appeler le service et traiter la réponse
+        try {
+            routeService.getRouteInfo(geoPoints, new RouteService.RouteInfoCallback() {
+                @Override
+                public void onSuccess(ArrayList<RouteStep> routeSteps) {
+                    StringBuilder infoText = new StringBuilder();
+                    int stepNumber = 1; // Initialiser le compteur d'étapes
+
+                    for (RouteStep step : routeSteps) {
+                        infoText.append("Étape ").append(stepNumber).append(" : ")
+                                .append("Durée: ").append(step.getDuration()).append(" min, ")
+                                .append("Distance: ").append(step.getDistance()).append(" km\n");
+                        stepNumber++; // Incrémenter le compteur pour la prochaine étape
+                    }
+                    runOnUiThread(() -> textViewDurations.setText(infoText.toString()));
+                }
+
+                @Override
+                public void onFailure(String errorMessage) {
+                    runOnUiThread(() -> textViewDurations.setText("Erreur: " + errorMessage));
+                }
+            });
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
 }

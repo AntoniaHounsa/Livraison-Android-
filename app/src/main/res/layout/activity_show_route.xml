@@ -14,4 +14,8 @@
         android:layout_weight="1"
         android:clickable="true"
         android:focusable="true"/>
+    <TextView
+        android:id="@+id/textViewDurations"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"></TextView>
 </androidx.appcompat.widget.LinearLayoutCompat>

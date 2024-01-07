@@ -112,8 +112,7 @@ public class UserCart extends AppCompatActivity implements CartUpdateListener {
 
     private void updateUIWithCartProducts(ArrayList<Product> products) {
         Log.d("UserCart", "Updating UI with products: " + products.size());
-        // Mettez à jour l'interface utilisateur ici, par exemple en actualisant un RecyclerView
-        //productArrayList.clear();
+
         productArrayList.addAll(products);
         cartItemAdapter.notifyDataSetChanged();
 

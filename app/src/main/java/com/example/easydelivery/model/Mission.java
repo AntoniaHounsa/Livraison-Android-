@@ -58,6 +58,6 @@ public class Mission {
 
 
     public enum Status {
-        EN_ATTENTE, ACCEPTEE, EN_COURS, REFUSEE, TERMINEE
+        EN_ATTENTE, ACCEPTEE, EN_COURS, REFUSEE, TERMINE
     }
 }

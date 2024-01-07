@@ -4,31 +4,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ShowRoute"
-    android:orientation="vertical"
-    android:padding="10dp">
+    tools:context=".FinishedMissions">
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/navbar_fragment_container"
         android:name="com.example.easydelivery.Fragment_Driver_Navbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-    <org.osmdroid.views.MapView
-        android:id="@+id/mapView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:clickable="true"
-        android:focusable="true"/>
     <TextView
-        android:id="@+id/textViewDurations"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"></TextView>
-
-    <Button
-        android:id="@+id/finishMission"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Terminé la mission"
-        android:backgroundTint="#F4978E"
-        android:layout_gravity="center_horizontal"></Button>
+        android:text="Historique des missions ..."
+        android:layout_gravity="center_horizontal"
+        android:textStyle="bold"
+        android:textSize="17dp"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></androidx.recyclerview.widget.RecyclerView>
+
 </androidx.appcompat.widget.LinearLayoutCompat>

@@ -121,13 +121,18 @@ public class AssignRoute extends AppCompatActivity {
                             Log.e("Firestore error", error.getMessage());
                             return;
                         }
-                        for (DocumentChange dc : value.getDocumentChanges()) {
-                            if (dc.getType() == DocumentChange.Type.ADDED) {
-                                Order order = dc.getDocument().toObject(Order.class);
-                                order.setOrderId(dc.getDocument().getId()); // Set the orderId
-                                orderArrayList.add(order);
+                        if(value != null && !value.isEmpty()){
+                            for (DocumentChange dc : value.getDocumentChanges()) {
+                                if (dc.getType() == DocumentChange.Type.ADDED) {
+                                    Order order = dc.getDocument().toObject(Order.class);
+                                    order.setOrderId(dc.getDocument().getId()); // Set the orderId
+                                    orderArrayList.add(order);
+                                }
                             }
+                        }else{
+                            if (progressDialog.isShowing()) progressDialog.dismiss();
                         }
+
                         orderItemAdapter.notifyDataSetChanged();
                         if (progressDialog.isShowing()) progressDialog.dismiss();
                     }

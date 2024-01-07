@@ -9,7 +9,7 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/navbar_fragment_container"
-        android:name="com.example.easydelivery.PlanificateurFragmentNavbar"
+        android:name="com.example.easydelivery.Fragment_Driver_Navbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 

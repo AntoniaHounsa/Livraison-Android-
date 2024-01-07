@@ -9,16 +9,19 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/navbar_fragment_container"
-        android:name="com.example.easydelivery.PlanificateurFragmentNavbar"
+        android:name="com.example.easydelivery.Fragment_Driver_Navbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-    <Button
-        android:id="@+id/onGoing"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:backgroundTint="#F4978E"
-        android:text="En cours..."/>
+
+
+        <Button
+            android:id="@+id/onGoing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:backgroundTint="#F4978E"
+            android:text="En cours..."/>
+
 
     <TextView
         android:layout_width="wrap_content"

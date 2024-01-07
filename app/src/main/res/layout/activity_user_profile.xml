@@ -70,7 +70,8 @@ tools:context=".UserProfile">
     android:id="@+id/ModifyButton"
     android:text="@string/enregistrer_les_modifications"
     android:layout_width="480dp"
-    android:layout_height="wrap_content"></Button>
+    android:layout_height="wrap_content"
+    android:backgroundTint="#F4978E"></Button>
 
 
 

@@ -31,7 +31,7 @@ public class AfterLoginDriver extends AppCompatActivity {
     FirebaseFirestore db;
     FirebaseAuth dbAuth;
     ProgressDialog progressDialog ;
-    Button onGoing;
+    Button onGoing, finished;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +64,8 @@ public class AfterLoginDriver extends AppCompatActivity {
             }
         });
 
+
+
     }
 
     private void EventChangeListener(){
@@ -81,16 +83,25 @@ public class AfterLoginDriver extends AppCompatActivity {
                             Log.e("Firesore error", error.getMessage());
                             return;
                         }
-                        for(DocumentChange dc : value.getDocumentChanges()){
-                            if(dc.getType() == DocumentChange.Type.ADDED || dc.getType() == DocumentChange.Type.MODIFIED){
-                                Mission mission = dc.getDocument().toObject(Mission.class);
-                                mission.setMissionId(dc.getDocument().getId()); // Set the missionId
-                                missionArrayList.add(mission);
+                        if(value != null && !value.isEmpty()){
+                            for(DocumentChange dc : value.getDocumentChanges()){
+                                if(dc.getType() == DocumentChange.Type.ADDED || dc.getType() == DocumentChange.Type.MODIFIED){
+                                    Mission mission = dc.getDocument().toObject(Mission.class);
+                                    mission.setMissionId(dc.getDocument().getId()); // Set the missionId
+                                    missionArrayList.add(mission);
+                                }
+                                missionItemAdapter.notifyDataSetChanged();
+
                             }
-                            missionItemAdapter.notifyDataSetChanged();
+                        }else{
                             if(progressDialog.isShowing()){
                                 progressDialog.dismiss();
                             }
+                        }
+
+
+                        if(progressDialog.isShowing()){
+                            progressDialog.dismiss();
                         }
                     }
                 });

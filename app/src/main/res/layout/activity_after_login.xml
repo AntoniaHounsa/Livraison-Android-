@@ -25,7 +25,7 @@ tools:context=".AfterLogin">
             android:layout_gravity="center_horizontal"
             android:text="Liste des produits"
             android:textColor="@color/black"
-            android:textSize="35sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <androidx.recyclerview.widget.RecyclerView

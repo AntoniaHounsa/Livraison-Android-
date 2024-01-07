@@ -16,18 +16,18 @@ import androidx.fragment.app.Fragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class PlanificateurFragmentNavbar extends Fragment {
+public class Fragment_Driver_Navbar extends Fragment {
     FirebaseUser user;
     TextView textView;
     FirebaseAuth auth;
-    ImageView userlogo, home;
+    ImageView userlogo, userCart, home;
 
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Je fais ça pour relier le fichier java à la vue xml
-        View view = inflater.inflate(R.layout.planificateur_fragment_navbar, container, false);
+        View view = inflater.inflate(R.layout.fragment_driver_navbar, container, false);
 
         Button logoutButton = view.findViewById(R.id.logoutButton);
         logoutButton.setOnClickListener(new View.OnClickListener() {
@@ -41,7 +41,7 @@ public class PlanificateurFragmentNavbar extends Fragment {
         home.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), AfterLoginPlanificateur.class);
+                Intent intent = new Intent(getActivity(), AfterLoginDriver.class);
                 startActivity(intent);
             }
         });
@@ -54,6 +54,7 @@ public class PlanificateurFragmentNavbar extends Fragment {
         if (user == null){
             Intent myIntent = new Intent (getActivity(), LoginActivity.class);
             startActivity(myIntent);
+
         }
         else{
             textView.setText(user.getEmail());
@@ -64,6 +65,15 @@ public class PlanificateurFragmentNavbar extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent myIntent = new Intent(getActivity(), UserProfile.class);
+                startActivity(myIntent);
+            }
+        });
+
+        userCart = view.findViewById(R.id.history);
+        userCart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myIntent = new Intent(getActivity(), FinishedMissions.class);
                 startActivity(myIntent);
             }
         });

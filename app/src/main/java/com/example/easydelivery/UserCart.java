@@ -98,6 +98,8 @@ public class UserCart extends AppCompatActivity implements CartUpdateListener {
                     if (cart != null) {
                         // Mettez à jour votre interface utilisateur avec la liste des produits du panier
                         updateUIWithCartProducts(cart.getProducts());
+                    }else{
+                        openOrderDialog.setVisibility(View.GONE);
                     }
                 } else {
                     Log.d("Cart data", "Current data: null");

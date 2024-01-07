@@ -130,6 +130,7 @@ public class AssignRoute extends AppCompatActivity {
                                 }
                             }
                         }else{
+                            confirmRouteAssignment.setVisibility(View.GONE);
                             if (progressDialog.isShowing()) progressDialog.dismiss();
                         }
 

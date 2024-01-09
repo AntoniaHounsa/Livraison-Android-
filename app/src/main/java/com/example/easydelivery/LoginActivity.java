@@ -23,7 +23,6 @@ import com.google.firebase.auth.FirebaseUser;
 public class LoginActivity extends AppCompatActivity implements ILoginView {
     TextInputEditText editTextEmail, editTextPassword;
     Button loginButton;
-    FirebaseAuth mAuth;
     ProgressBar progressBar;
     LoginPresenter presenter;
 
@@ -34,7 +33,7 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
 
         presenter = new LoginPresenter(this);
 
-        mAuth = FirebaseAuth.getInstance();
+
         editTextEmail = findViewById(R.id.email);
         editTextPassword = findViewById(R.id.password);
         loginButton = findViewById(R.id.loginButton);

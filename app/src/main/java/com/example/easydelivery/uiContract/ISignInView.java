@@ -9,5 +9,4 @@ public interface ISignInView {
     String getRole();
     String getTruckNumber();
     void navigateToLogin();
-    // Autres méthodes liées à l'UI...
 }

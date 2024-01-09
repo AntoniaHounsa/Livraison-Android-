@@ -1,32 +1,31 @@
 package com.example.easydelivery.presenter;
 
-import android.content.Intent;
 import android.text.TextUtils;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.example.easydelivery.LoginActivity;
-import com.example.easydelivery.SignInActivity;
 import com.example.easydelivery.model.Cart;
+import com.example.easydelivery.model.User;
+import com.example.easydelivery.repository.CartRepository;
+import com.example.easydelivery.repository.ICartRepository;
+import com.example.easydelivery.repository.IUserRepository;
+import com.example.easydelivery.repository.UserRepository;
 import com.example.easydelivery.uiContract.ISignInView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.HashMap;
-import java.util.Map;
 
 public class SignInPresenter implements ISignInPresenter {
     private ISignInView view;
-    private FirebaseAuth mAuth;
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private IUserRepository userRepository;
+    private ICartRepository cartRepository;
 
     public SignInPresenter(ISignInView view) {
         this.view = view;
-        mAuth = FirebaseAuth.getInstance();
+        this.userRepository = new UserRepository();
+        this.cartRepository = new CartRepository();
+
     }
 
     @Override
@@ -43,14 +42,14 @@ public class SignInPresenter implements ISignInPresenter {
             return;
         }
 
-        mAuth.createUserWithEmailAndPassword(email, password)
+        userRepository.createUser(email, password)
                 .addOnCompleteListener( new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
 
                         if (task.isSuccessful()) {
                             //je récupère l'UID pour connecter l'utilisateur dans firebase et firestore
-                            String uid = mAuth.getCurrentUser().getUid();
+                            String uid = userRepository.getUserUIDFromFauth();
                             saveAdditionalUserData(email, uid);
                             createAssociatedCart(uid);
                             view.hideProgress();
@@ -59,7 +58,6 @@ public class SignInPresenter implements ISignInPresenter {
                            view.navigateToLogin();
 
                         } else {
-                            // If sign in fails, display a message to the user.
                             view.showErrorMessage("compte non créer");
 
                         }
@@ -69,40 +67,32 @@ public class SignInPresenter implements ISignInPresenter {
 
     }
     private void saveAdditionalUserData(String email, String uid) {
+        // Création de l'objet User
+        User user = new User();
+        user.setId(uid);
+        user.setEmail(email);
+        user.setPhoneNumber(view.getPhoneNumber());
+        user.setRole(view.getRole());
 
-
-        // Récupérez les autres champs (numéro de téléphone, rôle, etc.)
-        String phoneNumber = view.getPhoneNumber();
-        String role = view.getRole();
-        String truckNumber = null;
-        if (role.equals("Chauffeur")) {
-            truckNumber = view.getTruckNumber();
+        if (user.getRole().equals("Chauffeur")) {
+            user.setTruckNumber(view.getTruckNumber());
         }
 
-        Map<String, Object> user = new HashMap<>();
-        user.put("email", email);
-        user.put("phoneNumber", phoneNumber);
-        user.put("role", role);
-        if (truckNumber != null) {
-            user.put("truckNumber", truckNumber);
-        }
-
-        db.collection("users").document(uid).set(user)
-                .addOnSuccessListener(aVoid -> {
-                    //Toast.makeText(this,"Les données ont bien été enregistrer ");
+        userRepository.saveUser(user)
+        .addOnSuccessListener(aVoid -> {
                 })
                 .addOnFailureListener(e -> {
-                    // Échec de l'enregistrement des données
+                    view.showErrorMessage("Echec lors de la création de l'tuilisateur");
                 });
     }
+
     private void createAssociatedCart(String uid){
         Cart myCart = new Cart();
         myCart.setUserId(uid);
 
-        Map<String, Object> cart = new HashMap<>();
-        cart.put("userId", myCart.getUserId());
-        db.collection("carts").document(uid).set(cart)
-                .addOnSuccessListener(aVoid ->{
+
+        cartRepository.createCartForUser(uid)
+        .addOnSuccessListener(aVoid ->{
 
                 })
                 .addOnFailureListener(e ->{

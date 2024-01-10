@@ -1,4 +1,4 @@
-package com.example.easydelivery.presenter;
+package com.example.easydelivery.presenter.signin;
 
 import android.text.TextUtils;
 
@@ -6,10 +6,10 @@ import androidx.annotation.NonNull;
 
 import com.example.easydelivery.model.Cart;
 import com.example.easydelivery.model.User;
-import com.example.easydelivery.repository.CartRepository;
-import com.example.easydelivery.repository.ICartRepository;
-import com.example.easydelivery.repository.IUserRepository;
-import com.example.easydelivery.repository.UserRepository;
+import com.example.easydelivery.repository.cart.CartRepository;
+import com.example.easydelivery.repository.cart.ICartRepository;
+import com.example.easydelivery.repository.user.IUserRepository;
+import com.example.easydelivery.repository.user.UserRepository;
 import com.example.easydelivery.uiContract.ISignInView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -34,11 +34,11 @@ public class SignInPresenter implements ISignInPresenter {
 
 
         if(TextUtils.isEmpty(email)){
-           view.showErrorMessage("Entrer l'email");
+            view.showErrorMessage("Entrer l'email");
             return;
         }
         if(TextUtils.isEmpty(password)){
-           view.showErrorMessage("Entrez le mot de passe");
+            view.showErrorMessage("Entrez le mot de passe");
             return;
         }
 
@@ -55,7 +55,7 @@ public class SignInPresenter implements ISignInPresenter {
                             view.hideProgress();
                             view.showSuccessMessage("Compte créer");
 
-                           view.navigateToLogin();
+                            view.navigateToLogin();
 
                         } else {
                             view.showErrorMessage("compte non créer");
@@ -79,7 +79,7 @@ public class SignInPresenter implements ISignInPresenter {
         }
 
         userRepository.saveUser(user)
-        .addOnSuccessListener(aVoid -> {
+                .addOnSuccessListener(aVoid -> {
                 })
                 .addOnFailureListener(e -> {
                     view.showErrorMessage("Echec lors de la création de l'tuilisateur");
@@ -92,7 +92,7 @@ public class SignInPresenter implements ISignInPresenter {
 
 
         cartRepository.createCartForUser(uid)
-        .addOnSuccessListener(aVoid ->{
+                .addOnSuccessListener(aVoid ->{
 
                 })
                 .addOnFailureListener(e ->{

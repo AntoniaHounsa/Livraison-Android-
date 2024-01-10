@@ -1,8 +1,8 @@
-package com.example.easydelivery.presenter;
-import com.example.easydelivery.repository.UserRepository;
+package com.example.easydelivery.presenter.login;
+import com.example.easydelivery.repository.user.UserRepository;
 import com.example.easydelivery.uiContract.ILoginView;
 
-public class LoginPresenter implements ILoginPresenter{
+public class LoginPresenter implements ILoginPresenter {
     private ILoginView view;
     private UserRepository userRepository;
 

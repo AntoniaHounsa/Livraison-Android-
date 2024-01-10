@@ -1,10 +1,8 @@
-package com.example.easydelivery.repository;
+package com.example.easydelivery.repository.cart;
 
 import com.example.easydelivery.model.Cart;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.Map;
 
 public class CartRepository implements ICartRepository {
     private FirebaseFirestore db;

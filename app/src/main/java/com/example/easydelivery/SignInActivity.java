@@ -12,7 +12,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.easydelivery.presenter.SignInPresenter;
+import com.example.easydelivery.presenter.signin.SignInPresenter;
 import com.example.easydelivery.uiContract.ISignInView;
 import com.google.android.material.textfield.TextInputEditText;
 

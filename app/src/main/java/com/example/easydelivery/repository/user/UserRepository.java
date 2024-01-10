@@ -1,6 +1,7 @@
-package com.example.easydelivery.repository;
+package com.example.easydelivery.repository.user;
 
 import com.example.easydelivery.model.User;
+import com.example.easydelivery.repository.user.IUserRepository;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;

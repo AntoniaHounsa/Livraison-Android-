@@ -1,4 +1,4 @@
-package com.example.easydelivery.repository;
+package com.example.easydelivery.repository.user;
 
 import com.example.easydelivery.model.User;
 import com.google.android.gms.tasks.Task;

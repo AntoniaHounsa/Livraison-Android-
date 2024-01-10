@@ -1,4 +1,4 @@
-package com.example.easydelivery.repository;
+package com.example.easydelivery.repository.cart;
 
 import com.google.android.gms.tasks.Task;
 

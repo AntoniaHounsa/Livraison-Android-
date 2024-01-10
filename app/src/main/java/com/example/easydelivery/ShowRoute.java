@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
@@ -12,6 +14,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.easydelivery.service.ItineraryService;
 import com.example.easydelivery.service.RouteService;
 import com.example.easydelivery.service.entity.RouteStep;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -28,6 +31,7 @@ import org.osmdroid.config.Configuration;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polyline;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class ShowRoute extends AppCompatActivity {
@@ -56,9 +60,9 @@ public class ShowRoute extends AppCompatActivity {
         geoPoints.add(geoPoints.get(0));
 
         // Créer et ajouter la polyline à la carte
-        Polyline line = new Polyline();
+       /* Polyline line = new Polyline();
         line.setPoints(geoPoints);
-        map.getOverlayManager().add(line);
+        map.getOverlayManager().add(line);*/
 
         // Ajouter un marqueur spécial pour le premier point (entrepôt)
         Marker startMarker = new Marker(map);
@@ -80,6 +84,32 @@ public class ShowRoute extends AppCompatActivity {
             map.getOverlays().add(deliveryMarker);
         }
 
+        // show route steps
+
+
+
+        ItineraryService itineraryService = new ItineraryService();
+
+        try {
+            itineraryService.getRouteDetails(geoPoints, new ItineraryService.RouteDetailsCallback() {
+                @Override
+                public void onSuccess(ArrayList<GeoPoint> routePoints) {
+                    runOnUiThread(() -> {
+                        Polyline line = new Polyline();
+                        line.setPoints(routePoints);
+                        map.getOverlayManager().add(line);
+                        map.invalidate();
+                    });
+                }
+
+                @Override
+                public void onFailure(String errorMessage) {
+                    // ... gestion des erreurs ...
+                }
+            });
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
 
 
         //centrer la carte sur le premier point
@@ -87,10 +117,10 @@ public class ShowRoute extends AppCompatActivity {
         mapController.setCenter(esigelc);
 
 
+
         // Récupérer les GeoPoints et initialiser le service
         RouteService routeService = new RouteService();
-
-                TextView textViewDurations = findViewById(R.id.textViewDurations); // votre TextView
+        TextView textViewDurations = findViewById(R.id.textViewDurations); // votre TextView
 
         // Appeler le service et traiter la réponse
         routeService.getRouteInfo(geoPoints, new RouteService.RouteInfoCallback() {
@@ -140,5 +170,4 @@ public class ShowRoute extends AppCompatActivity {
             }
         });
     }
-
 }

@@ -41,7 +41,7 @@ public class AssignRouteItemsAdapter extends RecyclerView.Adapter<AssignRouteIte
     @Override
     public void onBindViewHolder(@NonNull AssignRouteItemsAdapter.MyViewHolder holder, int position) {
         Order order = orderArrayList.get(position);
-        //convertir le timestamp en string pour l'afficher
+        //convertit le timestamp en string pour l'afficher
         Timestamp timestamp = order.getDeliveryDate();
         Date date = timestamp.toDate();
 
@@ -51,7 +51,7 @@ public class AssignRouteItemsAdapter extends RecyclerView.Adapter<AssignRouteIte
 
         holder.deliveryAdress.setText(order.getDeliveryAddress());
 
-        // Réinitialiser l'état de la case à cocher
+        // Réinitialise l'état de la case à cocher
         holder.checkBox.setChecked(order.isSelected());
 
         holder.checkBox.setOnClickListener(v -> {

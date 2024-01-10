@@ -63,11 +63,10 @@ public class UserCart extends AppCompatActivity implements CartUpdateListener {
             public void onClick(View v) {
                 // Créez un bundle pour contenir les produits
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("products", productArrayList); // Assurez-vous que la classe Product implémente Serializable
-
+                bundle.putSerializable("products", productArrayList);
 
                 OrderDialogFragment orderDialogFragment = new OrderDialogFragment();
-                orderDialogFragment.setArguments(bundle); // Attribuez le bundle au fragment
+                orderDialogFragment.setArguments(bundle); // Attribues le bundle au fragment
                 orderDialogFragment.setCartUpdateListener(UserCart.this);
                 orderDialogFragment.show(getSupportFragmentManager(),"MyFragment");
             }

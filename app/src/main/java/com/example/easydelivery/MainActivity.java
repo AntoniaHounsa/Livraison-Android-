@@ -13,7 +13,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //Récupérer l'instance du bouton
          signInButton = findViewById(R.id.SignInButton);
          signInButton.setOnClickListener(this);
 

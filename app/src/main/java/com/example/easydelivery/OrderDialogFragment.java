@@ -110,7 +110,6 @@ public class OrderDialogFragment extends DialogFragment implements AdresseVerifi
         String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
 
-        // Vous pouvez générer un nouvel ID de document ou utiliser l'ID de l'utilisateur
         db.collection("orders").add(order)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
@@ -131,10 +130,8 @@ public class OrderDialogFragment extends DialogFragment implements AdresseVerifi
     private void clearUserCart(String userId) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        // Supposer que le panier de l'utilisateur est un document dans la collection 'carts'
         DocumentReference cartRef = db.collection("carts").document(userId);
 
-        // Option 1: Supprimer le document du panier
         cartRef.update("products", new ArrayList<>())
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -147,7 +144,6 @@ public class OrderDialogFragment extends DialogFragment implements AdresseVerifi
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        // Gérer l'erreur
                     }
                 });
     }
@@ -164,7 +160,7 @@ public class OrderDialogFragment extends DialogFragment implements AdresseVerifi
             @Override
             public void run() {
                 if (isValid) {
-                    // Ajouter le géocode à l'objet commande
+                    // Ajout du   géocode à l'objet commande
                     order.setGeoCoordinates(new GeoPoint(geometry.getCoordinates().get(1), geometry.getCoordinates().get(0)));
                     saveOrderToFirestore(order);
                 } else {

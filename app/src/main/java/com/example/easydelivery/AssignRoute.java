@@ -63,10 +63,10 @@ public class AssignRoute extends AppCompatActivity {
                                 emails.add(email);
                             }
                         }
-                        // Mettez à jour le Spinner
+
                         updateSpinner(emails);
                     } else {
-                        // Gérer l'erreur
+
                     }
                 });
 
@@ -160,7 +160,6 @@ public class AssignRoute extends AppCompatActivity {
     }
 
     private void updateOrdersStatus(){
-        // Utilisez un compteur pour suivre le nombre de mises à jour réussies
         int[] updateCount = {0};
 
         for (Order order : selectedOrders) {
@@ -170,10 +169,9 @@ public class AssignRoute extends AppCompatActivity {
                         Log.d("Firestore", "Order updated successfully.");
                         orderArrayList.remove(order);
 
-                        // Incrémentez le compteur
                         updateCount[0]++;
 
-                        // Vérifiez si toutes les mises à jour sont terminées
+                        // Vérifies si toutes les mises à jour sont terminées
                         if (updateCount[0] == selectedOrders.size()) {
                             runOnUiThread(() -> {
                                 // Notifiez l'adaptateur du changement sur l'UI thread

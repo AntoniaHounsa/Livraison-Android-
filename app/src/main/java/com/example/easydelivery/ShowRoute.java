@@ -104,7 +104,6 @@ public class ShowRoute extends AppCompatActivity {
 
                 @Override
                 public void onFailure(String errorMessage) {
-                    // ... gestion des erreurs ...
                 }
             });
         } catch (JSONException e) {
@@ -153,7 +152,6 @@ public class ShowRoute extends AppCompatActivity {
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                // Traitement en cas de succès, par exemple afficher un message
                                 Toast.makeText(getApplicationContext(), "Mission terminée avec succès", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(getApplicationContext(), OnGoing.class);
                                 startActivity(intent);
@@ -163,7 +161,6 @@ public class ShowRoute extends AppCompatActivity {
                         .addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                // Traitement en cas d'échec, par exemple afficher un message d'erreur
                                 Toast.makeText(getApplicationContext(), "Erreur lors de la mise à jour", Toast.LENGTH_SHORT).show();
                             }
                         });

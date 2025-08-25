@@ -1,58 +1,58 @@
+<nav aria-label="Fil d’Ariane" class="breadcrumb-container">
+  @for (node of trail; track node.id; let last = $last) {
 
-import { Subscription } from 'rxjs';
+    <mat-form-field appearance="fill" floatLabel="never" class="crumb-field">
+      <mat-select
+        [ngModel]="node.id"
+        (ngModelChange)="onSelect($event)"
+        [panelClass]="'crumb-panel'">
 
-export class WeboDocumentationComponent implements OnInit, OnDestroy {
-  loadedDoc: LoadedDocumentation | null = null;
-  breadcrumbs: DocumentationMeta[] = [];
-  private sub = new Subscription();
+        <!-- libellé visible du select (pas besoin de cibler des classes internes) -->
+        <mat-select-trigger>
+          <span class="crumb-value">{{ node.title }}</span>
+        </mat-select-trigger>
 
-  constructor(
-    private documentationService: DocumentationService,
-    private drawerService: DrawerService
-  ) {}
+        @for (sib of (siblingsMap.get(node.id) ?? []); track sib.id) {
+          <!-- ngValue garde le type enum si tu envoies un enum -->
+          <mat-option [ngValue]="sib.id">{{ sib.title }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
 
-  ngOnInit(): void {
-    // ✅ NE TOUCHE PAS au reste de ton init
-    // ⬇️ AJOUT MINIMAL : on attend ready$, puis on écoute le state
-    this.sub.add(
-      this.documentationService.ready$.subscribe(() => {
-        // prêt → écouter les changements d’état du drawer
-        this.sub.add(
-          this.drawerService.drawerStateEvents$.subscribe(drawerState => {
-            // logs safe (aide au debug sans casser)
-            console.log('[doc] state:', drawerState);
-
-            // si fermé ou id absent → on nettoie l’affichage
-            if (!drawerState.documentationIsOpened || !drawerState.documentationId) {
-              this.loadedDoc = null;
-              this.breadcrumbs = [];
-              return;
-            }
-
-            const id = drawerState.documentationId;
-
-            // recharge le contenu
-            this.documentationService.loadById$(id).subscribe(doc => {
-              this.loadedDoc = doc;
-              console.log('[doc] loaded:', id);
-            });
-
-            // recharge le fil d’Ariane
-            this.documentationService.trailFromId$(id).subscribe(trail => {
-              this.breadcrumbs = trail;
-            });
-          })
-        );
-      })
-    );
+    @if (!last) {
+      <span class="sep">›</span>
+    }
   }
+</nav>
 
-  ngOnDestroy(): void {
-    this.sub.unsubscribe(); // ← propre, n’impacte rien d’autre
-  }
-
-  // garde bien une ARROW FUNCTION pour éviter "this" perdu
-  openById = (id: DocumentationIds) => {
-    this.drawerService.open(id); // ou toggle(true, id) si ça met bien à jour docId
-  };
+.breadcrumb-container {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  font-size: 14px;
 }
+
+.crumb-field {
+  width: auto;
+  min-width: 140px;
+  max-width: 40vw;   /* évite que ça prenne toute la ligne */
+  margin: 0;
+}
+
+/* texte affiché dans le trigger (évite les coupures moches) */
+.crumb-value {
+  display: inline-block;
+  max-width: 40vw;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* largeur du panneau (overlay) : peut être plus large que le trigger */
+.crumb-panel {
+  width: auto;
+  min-width: max-content; /* s’adapte au libellé le plus long */
+  max-width: 60vw;        /* ne pas dépasser l’écran */
+}
+
+.sep { opacity: .6; }

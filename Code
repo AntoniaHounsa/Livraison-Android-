@@ -1,4 +1,4 @@
-<nav aria-label="Fil d’Ariane" class="breadcrumb-container">
+
   @for (node of trail; track node.id; let last = $last) {
 
     <mat-form-field appearance="fill" floatLabel="never" class="crumb-field">
@@ -24,35 +24,3 @@
     }
   }
 </nav>
-
-.breadcrumb-container {
-  display: flex;
-  align-items: center;
-  gap: .5rem;
-  font-size: 14px;
-}
-
-.crumb-field {
-  width: auto;
-  min-width: 140px;
-  max-width: 40vw;   /* évite que ça prenne toute la ligne */
-  margin: 0;
-}
-
-/* texte affiché dans le trigger (évite les coupures moches) */
-.crumb-value {
-  display: inline-block;
-  max-width: 40vw;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* largeur du panneau (overlay) : peut être plus large que le trigger */
-.crumb-panel {
-  width: auto;
-  min-width: max-content; /* s’adapte au libellé le plus long */
-  max-width: 60vw;        /* ne pas dépasser l’écran */
-}
-
-.sep { opacity: .6; }

@@ -1,133 +1,58 @@
-// drawer-state.ts
-export type DrawerRenderMode = 'shell' | 'overlay';
 
-export interface DrawerState {
-  isOpen: boolean;
-  docId: DocumentationId | null;
-  mode: DrawerRenderMode;   // NEW
-}
+import { Subscription } from 'rxjs';
 
-2
-
-@Injectable({ providedIn: 'root' })
-export class DrawerService {
-  private readonly _state$ = new BehaviorSubject<DrawerState>({
-    isOpen: false, docId: null, mode: 'shell'
-  });
-  readonly state$ = this._state$.asObservable();
-
-  constructor(private idFromUrl: DocumentationIdResolverFromUrl) {}
-
-  open(docId: DocumentationId, mode: DrawerRenderMode = 'shell') {
-    const s = this._state$.value;
-    this._state$.next({ ...s, isOpen: true, docId, mode });
-  }
-
-  openForCurrentUrl(mode: DrawerRenderMode = 'shell') {
-    const id = this.idFromUrl.resolveCurrent();
-    this.open(id!, mode);
-  }
-
-  setOpen(isOpen: boolean) {
-    const s = this._state$.value;
-    this._state$.next({ ...s, isOpen, docId: isOpen ? s.docId : null });
-  }
-
-  setMode(mode: DrawerRenderMode) {
-    const s = this._state$.value;
-    this._state$.next({ ...s, mode });
-  }
-
-  close() {
-    const s = this._state$.value;
-    this._state$.next({ ...s, isOpen: false, docId: null });
-  }
-}
-
-3
-this.sub.add(
-  this.drawer.state$.subscribe(s => {
-    if (!this.drawerElement) return;
-    if (s.mode === 'shell') {
-      s.isOpen ? this.drawerElement.open() : this.drawerElement.close();
-    } else {
-      // si on passe en overlay, on garde le shell fermé
-      this.drawerElement.close();
-    }
-  })
-);
-
-// garder l’état en phase quand l’utilisateur clique le backdrop du drawer
-onDrawerOpenedChange(isOpen: boolean) {
-  this.drawer.setOpen(isOpen);
-}
-
-4
-
-@Injectable({ providedIn: 'root' })
-export class HelpOverlayService implements OnDestroy {
-  private overlayRef?: OverlayRef;
+export class WeboDocumentationComponent implements OnInit, OnDestroy {
+  loadedDoc: LoadedDocumentation | null = null;
+  breadcrumbs: DocumentationMeta[] = [];
   private sub = new Subscription();
 
   constructor(
-    private overlay: Overlay,
-    private injector: Injector,
-    private drawer: DrawerService
-  ) {
-    // se brancher sur l’état global
+    private documentationService: DocumentationService,
+    private drawerService: DrawerService
+  ) {}
+
+  ngOnInit(): void {
+    // ✅ NE TOUCHE PAS au reste de ton init
+    // ⬇️ AJOUT MINIMAL : on attend ready$, puis on écoute le state
     this.sub.add(
-      this.drawer.state$.subscribe(s => {
-        if (s.mode !== 'overlay') { this.close(); return; }
-        if (s.isOpen) this.ensureOpen();
-        else this.close();
+      this.documentationService.ready$.subscribe(() => {
+        // prêt → écouter les changements d’état du drawer
+        this.sub.add(
+          this.drawerService.drawerStateEvents$.subscribe(drawerState => {
+            // logs safe (aide au debug sans casser)
+            console.log('[doc] state:', drawerState);
+
+            // si fermé ou id absent → on nettoie l’affichage
+            if (!drawerState.documentationIsOpened || !drawerState.documentationId) {
+              this.loadedDoc = null;
+              this.breadcrumbs = [];
+              return;
+            }
+
+            const id = drawerState.documentationId;
+
+            // recharge le contenu
+            this.documentationService.loadById$(id).subscribe(doc => {
+              this.loadedDoc = doc;
+              console.log('[doc] loaded:', id);
+            });
+
+            // recharge le fil d’Ariane
+            this.documentationService.trailFromId$(id).subscribe(trail => {
+              this.breadcrumbs = trail;
+            });
+          })
+        );
       })
     );
   }
 
-  private ensureOpen() {
-    if (this.overlayRef) return;
-
-    this.overlayRef = this.overlay.create({
-      hasBackdrop: false,
-      disposeOnNavigation: true,
-      positionStrategy: this.overlay.position().global().top('0').right('0'),
-      width: '420px',
-      height: '100vh',
-      scrollStrategy: this.overlay.scrollStrategies.noop(),
-      panelClass: ['help-overlay-panel']
-    });
-
-    // le composant affiché dans l’overlay est le même que ton drawer : DocumentationComponent
-    const portal = new ComponentPortal(DocumentationComponent, null, this.injector);
-    this.overlayRef.attach(portal);
+  ngOnDestroy(): void {
+    this.sub.unsubscribe(); // ← propre, n’impacte rien d’autre
   }
 
-  close() {
-    this.overlayRef?.detach();
-    this.overlayRef?.dispose();
-    this.overlayRef = undefined;
-  }
-
-  ngOnDestroy() { this.sub.unsubscribe(); this.close(); }
-}
-/* styles.scss */
-.help-overlay-panel {
-  background: #fff;
-  border-left: 1px solid #eee;
-  box-shadow: 0 0 24px rgba(0,0,0,.24);
-  /* pas forcément besoin de z-index : l’overlay le plus récent passe au-dessus du dialog */
-}
-
-5 
-6
-openHelpFromDialog() {
-  // doc courante via l’URL
-  this.drawer.openForCurrentUrl('overlay');
-
-  // Variante : ouvrir une doc précise au-dessus du dialog
-  // this.drawer.open(DocumentationId.Usages, 'overlay');
-}
-
-openHelpNormal() {
-  this.drawer.openForCurrentUrl('shell');
+  // garde bien une ARROW FUNCTION pour éviter "this" perdu
+  openById = (id: DocumentationIds) => {
+    this.drawerService.open(id); // ou toggle(true, id) si ça met bien à jour docId
+  };
 }

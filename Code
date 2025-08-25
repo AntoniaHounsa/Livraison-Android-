@@ -1,26 +1,24 @@
 
+<nav aria-label="Fil d’Ariane" class="breadcrumb-container">
   @for (node of trail; track node.id; let last = $last) {
 
-    <mat-form-field appearance="fill" floatLabel="never" class="crumb-field">
+    <mat-form-field appearance="fill" [floatLabel]="'never'" class="crumb-field">
       <mat-select
-        [ngModel]="node.id"
-        (ngModelChange)="onSelect($event)"
+        [value]="node.id"
+        (selectionChange)="onSelect($event.value)"
         [panelClass]="'crumb-panel'">
 
-        <!-- libellé visible du select (pas besoin de cibler des classes internes) -->
         <mat-select-trigger>
           <span class="crumb-value">{{ node.title }}</span>
         </mat-select-trigger>
 
         @for (sib of (siblingsMap.get(node.id) ?? []); track sib.id) {
-          <!-- ngValue garde le type enum si tu envoies un enum -->
-          <mat-option [ngValue]="sib.id">{{ sib.title }}</mat-option>
+          <mat-option [value]="sib.id">{{ sib.title }}</mat-option>
         }
       </mat-select>
     </mat-form-field>
 
-    @if (!last) {
-      <span class="sep">›</span>
-    }
+    @if (!last) { <span class="sep">›</span> }
   }
 </nav>
+

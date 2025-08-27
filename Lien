@@ -1,0 +1,55 @@
+import { AfterViewInit, ElementRef, ViewChild, OnDestroy } from '@angular/core';
+
+export class WeboDocumentationComponent implements AfterViewInit, OnDestroy {
+  @ViewChild('docHost') docHost!: ElementRef<HTMLElement>;
+  private unlink?: () => void; // pour nettoyer le listener
+
+  // ... (tes injections & tes abonnements au drawerService existent déjà)
+
+  ngAfterViewInit(): void {
+    // ajoute le listener une seule fois (event delegation)
+    const host = this.docHost?.nativeElement;
+    if (!host) return;
+
+    const onClick = (ev: Event) => {
+      const target = ev.target as HTMLElement | null;
+      const a = target?.closest('a');
+      if (!a) return;
+
+      // 1) data-doc-id (recommandé)
+      const dataId = a.getAttribute('data-doc-id');
+
+      // 2) #doc/<id>
+      const href = a.getAttribute('href') || '';
+      const hashId = href.startsWith('#doc/') ? href.slice(5) : null;
+
+      // 3) chemin vers l’asset html (optionnel)
+      let pathId: DocumentationIds | null = null;
+      if (!dataId && !hashId && href.endsWith('.html')) {
+        // à toi d’implémenter toId si tu veux supporter ce format
+        try { pathId = DocumentationPathResolver.toId(href); } catch { /**/ }
+      }
+
+      const idStr = dataId ?? hashId ?? pathId as any;
+      if (!idStr) return; // lien externe normal → laisser passer
+
+      ev.preventDefault();
+      // si tu as une enum: caster proprement
+      const id = idStr as DocumentationIds;
+      this.openById(id);
+    };
+
+    host.addEventListener('click', onClick);
+    // garder une fonction de cleanup
+    this.unlink = () => host.removeEventListener('click', onClick);
+  }
+
+  ngOnDestroy(): void {
+    this.unlink?.();
+  }
+
+  // déjà en arrow function chez toi (important pour garder `this`)
+  openById = (id: DocumentationIds) => {
+    this.drawerService.open(id); // ou open(id, 'overlay') selon le contexte
+  };
+}

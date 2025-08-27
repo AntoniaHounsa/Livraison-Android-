@@ -1,1 +1,33 @@
 
+onDocClick(ev: MouseEvent) {
+  const target = ev.target as HTMLElement | null;
+
+  // a) bouton interne: <button data-doc-id="...">
+  const btn = target?.closest('button[data-doc-id]') as HTMLButtonElement | null;
+  if (btn?.dataset.docId) {
+    ev.preventDefault(); ev.stopPropagation();
+    this.openById(btn.dataset.docId as DocumentationIds);
+    return;
+  }
+
+  // b) lien interne: <a data-doc-id="..."> ou <a href="#doc/...">
+  const a = target?.closest('a') as HTMLAnchorElement | null;
+  if (!a) return; // pas un lien → on laisse passer
+
+  const docIdFromData = a.getAttribute('data-doc-id');
+  const href = a.getAttribute('href') || '';
+  const docIdFromHash = href.startsWith('#doc/') ? href.slice(5) : null;
+
+  const docId = docIdFromData ?? docIdFromHash;
+  if (!docId) return; // lien externe normal → laisser le navigateur
+
+  // Empêcher toute navigation (reload, fragment, etc.)
+  ev.preventDefault();
+  ev.stopPropagation();
+  (ev as any).stopImmediatePropagation?.();
+
+  // (optionnel) neutralise href pour les prochains clics
+  a.setAttribute('href', '#');
+
+  this.openById(docId as DocumentationIds);
+}

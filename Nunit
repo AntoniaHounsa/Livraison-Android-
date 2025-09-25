@@ -1,0 +1,91 @@
+#region ReadVoteStatistics
+
+[Test]
+public void ReadVoteStatistics_it_returns_stats_and_calls_verifier()
+{
+    // Arrange
+    var logic = GetVoteLogic();
+    var stats = new VoteStatisticsDTO();
+    _voteStoreMock
+        .Setup(s => s.GetVoteStatistics(It.IsAny<Vote>()))
+        .Returns(stats);
+
+    _voteVerifierMock
+        .Setup(v => v.ThrowIfEntityNotFound(stats, It.IsAny<string>()))
+        .Verifiable();
+
+    // Act
+    var result = logic.ReadVoteStatistics("http://site");
+
+    // Assert
+    Assert.That(result, Is.SameAs(stats));
+    _voteStoreMock.Verify(s => s.GetVoteStatistics(It.Is<Vote>(v => v.Url == "http://site")), Times.Once);
+    _voteVerifierMock.Verify(v => v.ThrowIfEntityNotFound(stats, It.Is<string>(s => s.Contains("http://site"))), Times.Once);
+    _pftILoggerMock.Verify(l => l.LogException(It.IsAny<Exception>()), Times.Never);
+}
+
+[Test]
+public void ReadVoteStatistics_it_throws_when_verifier_detects_not_found()
+{
+    // Arrange
+    var logic = GetVoteLogic();
+
+    _voteStoreMock
+        .Setup(s => s.GetVoteStatistics(It.IsAny<Vote>()))
+        .Returns((VoteStatisticsDTO)null);
+
+    var notFound = new KeyNotFoundException("Not found");
+    _voteVerifierMock
+        .Setup(v => v.ThrowIfEntityNotFound(null, It.IsAny<string>()))
+        .Throws(notFound);
+
+    // Act
+    var ex = Assert.Throws<KeyNotFoundException>(() => logic.ReadVoteStatistics("missing"));
+
+    // Assert
+    Assert.That(ex, Is.SameAs(notFound));
+    _pftILoggerMock.Verify(l => l.LogException(It.IsAny<Exception>()), Times.Never);
+}
+
+[Test]
+public void ReadVoteStatistics_it_logs_and_rethrows_when_store_throws()
+{
+    // Arrange
+    var logic = GetVoteLogic();
+    var boom = new TimeoutException("slow db");
+
+    _voteStoreMock
+        .Setup(s => s.GetVoteStatistics(It.IsAny<Vote>()))
+        .Throws(boom);
+
+    // Act
+    var ex = Assert.Throws<TimeoutException>(() => logic.ReadVoteStatistics("http://x"));
+
+    // Assert
+    Assert.That(ex, Is.SameAs(boom));
+    _pftILoggerMock.Verify(l => l.LogException(boom), Times.Once);
+    _voteVerifierMock.Verify(v => v.ThrowIfEntityNotFound(It.IsAny<VoteStatisticsDTO>(), It.IsAny<string>()), Times.Never);
+}
+
+[Test]
+public void ReadVoteStatistics_it_passes_right_vote_to_store()
+{
+    // Arrange
+    var logic = GetVoteLogic();
+    Vote captured = null!;
+    var stats = new VoteStatisticsDTO();
+
+    _voteStoreMock
+        .Setup(s => s.GetVoteStatistics(It.IsAny<Vote>()))
+        .Callback<Vote>(v => captured = v)
+        .Returns(stats);
+
+    // Act
+    logic.ReadVoteStatistics("http://expected");
+
+    // Assert
+    Assert.That(captured, Is.Not.Null);
+    Assert.That(captured.Url, Is.EqualTo("http://expected"));
+}
+
+#endregion

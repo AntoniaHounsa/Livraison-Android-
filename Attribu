@@ -1,3 +1,115 @@
+
+using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+
+[TestFixture]
+public class StartAndEndDatesCoherenceAttributeTests
+{
+    private ValidationContext GetContext(object instance) =>
+        new ValidationContext(instance, null, null);
+
+    [Test]
+    public void When_dates_are_null_it_returns_success()
+    {
+        var model = new ReadVoteRequestMapper
+        {
+            StartDate = null,
+            EndDate = null
+        };
+
+        var results = new List<ValidationResult>();
+        var isValid = Validator.TryValidateObject(model, GetContext(model), results, true);
+
+        Assert.That(isValid, Is.True);
+    }
+
+    [Test]
+    public void When_startdate_is_invalid_string_it_returns_success()
+    {
+        var model = new ReadVoteRequestMapper
+        {
+            StartDate = "not-a-date",
+            EndDate = "2025-01-01"
+        };
+
+        var results = new List<ValidationResult>();
+        var isValid = Validator.TryValidateObject(model, GetContext(model), results, true);
+
+        Assert.That(isValid, Is.True);
+    }
+
+    [Test]
+    public void When_enddate_is_invalid_string_it_returns_success()
+    {
+        var model = new ReadVoteRequestMapper
+        {
+            StartDate = "2025-01-01",
+            EndDate = "abc"
+        };
+
+        var results = new List<ValidationResult>();
+        var isValid = Validator.TryValidateObject(model, GetContext(model), results, true);
+
+        Assert.That(isValid, Is.True);
+    }
+
+    [Test]
+    public void When_start_is_before_end_it_returns_success()
+    {
+        var model = new ReadVoteRequestMapper
+        {
+            StartDate = "2025-01-01",
+            EndDate = "2025-12-31"
+        };
+
+        var results = new List<ValidationResult>();
+        var isValid = Validator.TryValidateObject(model, GetContext(model), results, true);
+
+        Assert.That(isValid, Is.True);
+    }
+
+    [Test]
+    public void When_start_equals_end_it_returns_success()
+    {
+        var model = new ReadVoteRequestMapper
+        {
+            StartDate = "2025-01-01",
+            EndDate = "2025-01-01"
+        };
+
+        var results = new List<ValidationResult>();
+        var isValid = Validator.TryValidateObject(model, GetContext(model), results, true);
+
+        Assert.That(isValid, Is.True);
+    }
+
+    [Test]
+    public void When_start_is_after_end_it_returns_error()
+    {
+        var model = new ReadVoteRequestMapper
+        {
+            StartDate = "2025-12-31",
+            EndDate = "2025-01-01"
+        };
+
+        var results = new List<ValidationResult>();
+        var isValid = Validator.TryValidateObject(model, GetContext(model), results, true);
+
+        Assert.That(isValid, Is.False);
+        Assert.That(results, Has.Count.EqualTo(1));
+        Assert.That(results[0].ErrorMessage, Does.Contain("Date")); // ou ValidationMessages.InvalidDates si tu l’as mis
+    }
+}
+
+
+
+
+
+xxxxxx
+
+
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

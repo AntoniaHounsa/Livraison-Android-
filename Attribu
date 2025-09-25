@@ -1,4 +1,64 @@
+using NUnit.Framework;
 
+[TestFixture]
+public class StringInjectionAttributeTests
+{
+    private StringInjectionAttribute _attr;
+
+    [SetUp]
+    public void SetUp()
+    {
+        _attr = new StringInjectionAttribute();
+    }
+
+    [Test]
+    public void IsValid_returns_true_if_value_is_null()
+    {
+        var result = _attr.IsValid(null);
+        Assert.That(result, Is.True);
+    }
+
+    [Test]
+    public void IsValid_returns_true_if_value_is_not_string()
+    {
+        var result = _attr.IsValid(123); // int
+        Assert.That(result, Is.True);
+    }
+
+    [Test]
+    public void IsValid_returns_true_if_string_does_not_contain_angle_brackets()
+    {
+        var result = _attr.IsValid("Hello World");
+        Assert.That(result, Is.True);
+    }
+
+    [Test]
+    public void IsValid_returns_false_if_string_contains_less_than()
+    {
+        var result = _attr.IsValid("Hello < World");
+        Assert.That(result, Is.False);
+    }
+
+    [Test]
+    public void IsValid_returns_false_if_string_contains_greater_than()
+    {
+        var result = _attr.IsValid("Hello > World");
+        Assert.That(result, Is.False);
+    }
+
+    [Test]
+    public void IsValid_returns_false_if_string_contains_script_tag()
+    {
+        var result = _attr.IsValid("<script>alert('XSS')</script>");
+        Assert.That(result, Is.False);
+    }
+}
+
+
+
+
+
+xxxxxxxxx
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;

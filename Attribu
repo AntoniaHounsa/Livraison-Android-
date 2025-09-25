@@ -1,3 +1,70 @@
+using NUnit.Framework;
+using System;
+using System.ComponentModel.DataAnnotations;
+
+[TestFixture]
+public class DateTimeValidationAttributeTests
+{
+    private DateTimeValidationAttribute _attribute;
+    private ValidationContext _context;
+
+    [SetUp]
+    public void SetUp()
+    {
+        _attribute = new DateTimeValidationAttribute
+        {
+            ErrorMessage = "{0} must be a valid date"
+        };
+        _context = new ValidationContext(new { }, null, null)
+        {
+            DisplayName = "TestProperty"
+        };
+    }
+
+    [Test]
+    public void IsValid_returns_success_if_value_is_null()
+    {
+        // Act
+        var result = _attribute.GetValidationResult(null, _context);
+
+        // Assert
+        Assert.That(result, Is.EqualTo(ValidationResult.Success));
+    }
+
+    [Test]
+    public void IsValid_returns_success_if_value_is_valid_date_string()
+    {
+        // Act
+        var result = _attribute.GetValidationResult("2025-09-25", _context);
+
+        // Assert
+        Assert.That(result, Is.EqualTo(ValidationResult.Success));
+    }
+
+    [Test]
+    public void IsValid_returns_error_if_value_is_invalid_date_string()
+    {
+        // Act
+        var result = _attribute.GetValidationResult("not-a-date", _context);
+
+        // Assert
+        Assert.That(result, Is.Not.EqualTo(ValidationResult.Success));
+        Assert.That(result.ErrorMessage, Does.Contain("TestProperty must be a valid date"));
+    }
+
+    [Test]
+    public void IsValid_returns_error_if_value_is_not_a_string()
+    {
+        // Act
+        var result = _attribute.GetValidationResult(123, _context);
+
+        // Assert
+        Assert.That(result, Is.Not.EqualTo(ValidationResult.Success));
+        Assert.That(result.ErrorMessage, Does.Contain("TestProperty must be a valid date"));
+    }
+}
+
+
 ReadVoteStatistics
 
 [Test]

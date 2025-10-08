@@ -1,0 +1,49 @@
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+
+public class EmptyObjectAsEmptyDictOfListsConverter<T> : JsonConverter
+{
+    public override bool CanConvert(Type objectType)
+        => objectType == typeof(Dictionary<string, List<T>>);
+
+    public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+    {
+        if (reader.TokenType == JsonToken.Null)
+            return new Dictionary<string, List<T>>();
+
+        // Charge le token pour inspecter sa forme
+        var token = JToken.ReadFrom(reader);
+
+        // {} → retourne un dictionnaire vide
+        if (token.Type == JTokenType.Object && !token.HasValues)
+            return new Dictionary<string, List<T>>();
+
+        // Sinon, laisse faire la désérialisation standard (lèvera si vraiment invalide)
+        try
+        {
+            return token.ToObject<Dictionary<string, List<T>>>(serializer) 
+                   ?? new Dictionary<string, List<T>>();
+        }
+        catch
+        {
+            // Sécurité douce : retourne vide plutôt que lever
+            return new Dictionary<string, List<T>>();
+        }
+    }
+
+    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        => serializer.Serialize(writer, value);
+}
+
+public class Racine
+{
+    public string Id { get; set; }
+
+    [JsonConverter(typeof(EmptyObjectAsEmptyDictOfListsConverter<string>))]
+    public Dictionary<string, List<string>> MonChamp { get; set; }
+}
+
+// Désérialisation “tout-en-un”
+var obj = JsonConvert.DeserializeObject<Racine>(json);

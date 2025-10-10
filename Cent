@@ -1,0 +1,96 @@
+Parfait 🌟 tu as très bien cerné ton besoin.
+Voici la rédaction de ton issue GitLab structurée proprement selon les trois sections que tu veux :
+→ Spécification du besoin (User Story)
+→ Spécification fonctionnelle
+→ Spécification technique
+
+Aucune ligne de code, uniquement ce qu’il faut pour la validation équipe.
+
+⸻
+
+🧾 Issue : Uniformisation de la gestion des erreurs API
+
+⸻
+
+🧠 Spécification du besoin (User Story)
+
+En tant que développeuse front,
+je souhaite que la gestion des erreurs et des succès API soit centralisée et homogène à travers toute l’application,
+afin de :
+	•	éviter la répétition de logique d’affichage (toasts, redirections, etc.) dans chaque composant,
+	•	garantir une expérience utilisateur cohérente quelle que soit la page,
+	•	et faciliter la maintenance du code en centralisant les comportements standards.
+
+Critères d’acceptation :
+	•	La gestion des erreurs est uniforme sur tous les modules.
+	•	Les redirections automatiques et messages de feedback sont cohérents selon le code HTTP.
+	•	Les développeurs peuvent personnaliser facilement les comportements pour un cas spécifique (message, redirection…).
+	•	Aucun composant n’a besoin de gérer manuellement un alert() ou une redirection API.
+
+⸻
+
+⚙️ Spécification fonctionnelle
+
+Objectif général :
+Centraliser la gestion des retours API (succès et erreurs) dans la lib partagée, afin d’appliquer des règles communes à toutes les applications Angular du monorepo.
+
+Cas à gérer
+
+Cas	Message utilisateur	Action complémentaire
+200 / 201	“Action effectuée avec succès”	Possibilité de redirection personnalisée selon le contexte (ex : vers la ressource créée).
+401 (Non autorisé)	“Votre session a expiré.”	Redirection automatique vers /login.
+403 (Accès refusé)	“Accès refusé.”	Redirection automatique vers /forbidden.
+422 (Erreur de validation)	Pas de message global.	Gestion spécifique au niveau du formulaire (affichage des erreurs champ par champ).
+500+ (Erreur serveur)	“Une erreur interne est survenue.”	Aucun détail technique affiché.
+0 (Erreur réseau)	“Connexion réseau indisponible.”	Aucun redirect, simple notification.
+
+Attendus fonctionnels
+	•	L’affichage des toasts doit être automatique et cohérent pour tous les modules.
+	•	Les redirections doivent être automatiques pour les statuts 401 et 403.
+	•	Les erreurs de validation (422) doivent pouvoir être transmises à un gestionnaire local de formulaire.
+	•	Le développeur doit pouvoir surcharger le comportement dans un cas précis :
+	•	personnaliser le message de succès ou d’erreur ;
+	•	rediriger vers une page dynamique après succès (ex : /users/:id);
+	•	exécuter une fonction personnalisée à la fin d’un appel (ex : reset spinner).
+	•	Tous les messages doivent être en français et compréhensibles par l’utilisateur final.
+
+⸻
+
+🧩 Spécification technique
+
+Périmètre :
+	•	Implémentation dans la lib partagée (@org/shared/api-handling ou équivalent).
+	•	Application à toutes les requêtes réalisées via HttpClient.
+	•	Aucun composant spécifique n’aura à gérer directement les erreurs API.
+
+Architecture technique cible
+	1.	HttpInterceptor
+	•	Capture toutes les erreurs HTTP (4xx, 5xx, etc.).
+	•	Gère les cas globaux (401, 403, 500, 0).
+	•	Normalise les erreurs sous un modèle commun (status, message, details?).
+	•	Laisse les flux remonter pour traitement complémentaire si nécessaire.
+	2.	Service de notification (Notifier)
+	•	Interface commune pour afficher les toasts (implémentation basée sur Angular Material ou autre lib).
+	•	Accessible depuis la lib via injection de dépendance.
+	3.	Opérateur RxJS withApiHandling()
+	•	Point d’entrée principal pour le développeur.
+	•	Permet de passer des options personnalisées par appel :
+	•	message de succès / d’erreur (statique ou dynamique) ;
+	•	redirection en cas de succès / d’échec ;
+	•	fonction de gestion d’erreurs de champ (pour les 422) ;
+	•	callback finally() pour relâcher les états de chargement.
+	•	Cet opérateur appliquera la logique standard tout en laissant la flexibilité de surcharger.
+	4.	Configurable & réutilisable
+	•	Par défaut, les comportements standards (messages, redirections, statut codes) seront définis dans la lib.
+	•	Chaque application pourra les surcharger via configuration si nécessaire.
+
+Résultat attendu
+	•	Tous les modules bénéficient automatiquement du même comportement en cas d’erreur ou de succès API.
+	•	Chaque feature peut personnaliser son comportement localement sans casser la logique globale.
+	•	La maintenance et l’évolution des règles de gestion se font dans un seul endroit (lib partagée).
+	•	Le code métier dans les composants reste simple et lisible (pas de catchError, alert(), etc.).
+
+⸻
+
+Souhaites-tu que je t’en fasse aussi la version Markdown prête à copier-coller pour GitLab (avec titres ###, tableaux bien alignés et un format plus “GitLab Issue Template”) ?
+Ça te permettrait de la déposer directement dans ton repo sans reformater.

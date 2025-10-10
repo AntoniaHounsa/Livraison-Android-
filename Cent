@@ -1,3 +1,28 @@
+
+export function withApiHandling(options) {
+  return (source$) => source$.pipe(
+    tap((res) => {
+      if (options.successMessage) notifier.success(options.successMessage);
+      if (options.successRedirectTo) router.navigate(options.successRedirectTo);
+    }),
+    catchError((err) => {
+      notifier.error(options.errorMessage || err.message);
+      return throwError(() => err);
+    }),
+    finalize(() => options.finally?.())
+  );
+}
+
+this.http.post('/api/users', this.form.value).pipe(
+  withApiHandling({
+    successMessage: 'Utilisateur créé avec succès !'
+  })
+).subscribe();
+
+
+
+
+
 Parfait 🌟 tu as très bien cerné ton besoin.
 Voici la rédaction de ton issue GitLab structurée proprement selon les trois sections que tu veux :
 → Spécification du besoin (User Story)

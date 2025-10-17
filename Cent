@@ -1,3 +1,57 @@
+import { MonoTypeOperatorFunction, throwError } from 'rxjs';
+import { catchError, finalize, tap } from 'rxjs/operators';
+
+export interface WithApiHandlingOptions<T> {
+  setLoading?: (isLoading: boolean) => void;
+  onSuccess?: (value: T) => void;
+  successMessage?: string;
+  onError?: (error: any) => void;
+  toast?: { success?: (msg: string) => void; error?: (msg: string) => void };
+  onFinally?: () => void;
+}
+
+export function withApiHandling<T>(
+  options: WithApiHandlingOptions<T> = {}
+): MonoTypeOperatorFunction<T> {
+  const { setLoading, onSuccess, successMessage, onError, toast, onFinally } = options;
+
+  return (source$) => {
+    setLoading?.(true); // 🔹 1. Active le loader
+
+    return source$.pipe(
+      tap((value) => { // 🔹 2. Quand tout se passe bien
+        onSuccess?.(value);
+        if (successMessage && toast?.success) toast.success(successMessage);
+      }),
+      catchError((error) => { // 🔹 3. Si une erreur arrive
+        onError?.(error);
+        if (toast?.error) {
+          const msg = error?.error?.message ?? error?.message ?? 'Une erreur est survenue.';
+          toast.error(msg);
+        }
+        return throwError(() => error);
+      }),
+      finalize(() => { // 🔹 4. Toujours exécuté à la fin
+        setLoading?.(false);
+        onFinally?.();
+      })
+    );
+  };
+}
+
+
+this.http.get('/api/users').pipe(
+  withApiHandling({
+    setLoading: (b) => this.loading = b,
+    onSuccess: () => console.log('Succès 🎉'),
+    onError: (err) => console.log('Erreur ⚠️', err),
+  })
+).subscribe();
+
+
+
+
+
 
 export function withApiHandling(options) {
   return (source$) => source$.pipe(

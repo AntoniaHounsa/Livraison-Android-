@@ -1,3 +1,50 @@
+protected handleRequest<T>(
+  request$: Observable<any>,
+  apiOptions?: WithApiHandlingOptions<T>
+): Observable<T> {
+  const transformed$ = new Observable<T>((subscriber) => {
+    request$.subscribe({
+      next: (res) => {
+        // Ta logique actuelle
+        this.totalRecords = res?.body?.meta?.totalRecords;
+        subscriber.next(res?.body?.data);
+      },
+      error: (res) => {
+        subscriber.error({
+          error: res?.error?.errors,
+          status: res?.status,
+        });
+      },
+      complete: () => subscriber.complete(),
+    });
+  });
+
+  // 🧠 On applique maintenant ton opérateur ici
+  return transformed$.pipe(
+    withApiHandling<T>(apiOptions)
+  );
+}
+
+
+delete(id: number, dr = new DeleteRequest()): Observable<any> {
+  const url = `${this.getBaseUrl()}/${id}`;
+  const obs = this.http.delete(url, {
+    observe: 'response',
+    params: dr.params,
+  });
+
+  return this.handleRequest(obs, {
+    setLoading: (b) => this.ui.setLoading(b),
+    toast: this.toast,
+    successMessage: 'Suppression effectuée avec succès ✅',
+    onError: (err) => console.error('Erreur API', err),
+  });
+}
+
+
+
+
+
 import { MonoTypeOperatorFunction, throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 

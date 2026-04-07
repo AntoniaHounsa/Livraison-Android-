@@ -1,0 +1,345 @@
+export interface HtmlValidationError {
+  line: number;
+  column: number;
+  tagName: string;
+  message: string;
+}
+
+interface TagToken {
+  type: 'open' | 'close' | 'self-close';
+  tagName: string;
+  line: number;
+  column: number;
+  raw: string;
+}
+
+interface OpenTagStackItem {
+  tagName: string;
+  line: number;
+  column: number;
+}
+
+//// service de validstion 
+
+import { Injectable } from '@angular/core';
+
+export interface HtmlValidationError {
+  line: number;
+  column: number;
+  tagName: string;
+  message: string;
+}
+
+interface TagToken {
+  type: 'open' | 'close' | 'self-close';
+  tagName: string;
+  line: number;
+  column: number;
+  raw: string;
+}
+
+interface OpenTagStackItem {
+  tagName: string;
+  line: number;
+  column: number;
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class HtmlValidationService {
+  /**
+   * Balises HTML void : pas besoin de fermeture.
+   */
+  private readonly voidTags = new Set([
+    'area',
+    'base',
+    'br',
+    'col',
+    'embed',
+    'hr',
+    'img',
+    'input',
+    'link',
+    'meta',
+    'param',
+    'source',
+    'track',
+    'wbr'
+  ]);
+
+  validate(html: string): HtmlValidationError[] {
+    const errors: HtmlValidationError[] = [];
+    const tokens = this.tokenize(html);
+    const stack: OpenTagStackItem[] = [];
+
+    for (const token of tokens) {
+      if (token.type === 'self-close') {
+        continue;
+      }
+
+      if (token.type === 'open') {
+        if (!this.voidTags.has(token.tagName)) {
+          stack.push({
+            tagName: token.tagName,
+            line: token.line,
+            column: token.column
+          });
+        }
+        continue;
+      }
+
+      if (token.type === 'close') {
+        const lastOpen = stack[stack.length - 1];
+
+        if (!lastOpen) {
+          errors.push({
+            line: token.line,
+            column: token.column,
+            tagName: token.tagName,
+            message: `Balise fermante </${token.tagName}> sans balise ouvrante correspondante.`
+          });
+          continue;
+        }
+
+        if (lastOpen.tagName === token.tagName) {
+          stack.pop();
+          continue;
+        }
+
+        // Recherche si la balise existe plus bas dans la pile
+        const matchingIndex = this.findLastMatchingOpenTagIndex(stack, token.tagName);
+
+        if (matchingIndex === -1) {
+          errors.push({
+            line: token.line,
+            column: token.column,
+            tagName: token.tagName,
+            message: `Balise fermante </${token.tagName}> sans balise ouvrante correspondante.`
+          });
+          continue;
+        }
+
+        // Cas d'imbrication incorrecte, ex: <div><span></div>
+        const unclosedTags = stack.slice(matchingIndex + 1);
+
+        for (let i = unclosedTags.length - 1; i >= 0; i--) {
+          const unclosed = unclosedTags[i];
+          errors.push({
+            line: unclosed.line,
+            column: unclosed.column,
+            tagName: unclosed.tagName,
+            message: `Balise <${unclosed.tagName}> ouverte ici mais non fermée avant </${token.tagName}>.`
+          });
+        }
+
+        // On retire jusqu'à la balise correspondante incluse
+        stack.splice(matchingIndex);
+      }
+    }
+
+    // Balises restantes non fermées
+    for (const openTag of stack) {
+      errors.push({
+        line: openTag.line,
+        column: openTag.column,
+        tagName: openTag.tagName,
+        message: `Balise <${openTag.tagName}> non fermée.`
+      });
+    }
+
+    return this.deduplicate(errors);
+  }
+
+  private findLastMatchingOpenTagIndex(stack: OpenTagStackItem[], tagName: string): number {
+    for (let i = stack.length - 1; i >= 0; i--) {
+      if (stack[i].tagName === tagName) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  private deduplicate(errors: HtmlValidationError[]): HtmlValidationError[] {
+    const seen = new Set<string>();
+    return errors.filter(error => {
+      const key = `${error.line}|${error.column}|${error.tagName}|${error.message}`;
+      if (seen.has(key)) {
+        return false;
+      }
+      seen.add(key);
+      return true;
+    });
+  }
+
+  private tokenize(html: string): TagToken[] {
+    const tokens: TagToken[] = [];
+    let i = 0;
+    let line = 1;
+    let column = 1;
+
+    while (i < html.length) {
+      const char = html[i];
+
+      // Gestion des retours ligne
+      if (char === '\n') {
+        i++;
+        line++;
+        column = 1;
+        continue;
+      }
+
+      // Commentaire HTML
+      if (html.startsWith('<!--', i)) {
+        const end = html.indexOf('-->', i + 4);
+        const commentContent = end === -1 ? html.slice(i) : html.slice(i, end + 3);
+        ({ line, column } = this.advancePosition(commentContent, line, column));
+        i += commentContent.length;
+        continue;
+      }
+
+      // Doctype, <?xml ...?>, etc.
+      if (char === '<' && (html[i + 1] === '!' || html[i + 1] === '?')) {
+        const end = html.indexOf('>', i + 1);
+        const raw = end === -1 ? html.slice(i) : html.slice(i, end + 1);
+        ({ line, column } = this.advancePosition(raw, line, column));
+        i += raw.length;
+        continue;
+      }
+
+      // Balise
+      if (char === '<') {
+        const tagStartLine = line;
+        const tagStartColumn = column;
+
+        const end = this.findTagEnd(html, i);
+        if (end === -1) {
+          tokens.push({
+            type: 'open',
+            tagName: 'unknown',
+            line: tagStartLine,
+            column: tagStartColumn,
+            raw: html.slice(i)
+          });
+          break;
+        }
+
+        const raw = html.slice(i, end + 1);
+        const token = this.parseTag(raw, tagStartLine, tagStartColumn);
+
+        if (token) {
+          tokens.push(token);
+        }
+
+        ({ line, column } = this.advancePosition(raw, line, column));
+        i = end + 1;
+        continue;
+      }
+
+      i++;
+      column++;
+    }
+
+    return tokens;
+  }
+
+  /**
+   * Trouve le ">" de fin en ignorant les ">" présents dans les attributs quotés.
+   */
+  private findTagEnd(html: string, startIndex: number): number {
+    let i = startIndex + 1;
+    let quote: '"' | "'" | null = null;
+
+    while (i < html.length) {
+      const char = html[i];
+
+      if (quote) {
+        if (char === quote) {
+          quote = null;
+        }
+      } else {
+        if (char === '"' || char === "'") {
+          quote = char;
+        } else if (char === '>') {
+          return i;
+        }
+      }
+
+      i++;
+    }
+
+    return -1;
+  }
+
+  private parseTag(raw: string, line: number, column: number): TagToken | null {
+    const trimmed = raw.trim();
+
+    // Ignore commentaires ou syntaxes spéciales déjà traités
+    if (!trimmed.startsWith('<') || !trimmed.endsWith('>')) {
+      return null;
+    }
+
+    // Fermante
+    const closeMatch = trimmed.match(/^<\s*\/\s*([a-zA-Z][\w:-]*)\s*>$/);
+    if (closeMatch) {
+      return {
+        type: 'close',
+        tagName: closeMatch[1].toLowerCase(),
+        line,
+        column,
+        raw
+      };
+    }
+
+    // Ouvrante / auto-fermante
+    const openMatch = trimmed.match(/^<\s*([a-zA-Z][\w:-]*)([\s\S]*?)\/?\s*>$/);
+    if (!openMatch) {
+      return null;
+    }
+
+    const tagName = openMatch[1].toLowerCase();
+    const isSelfClosing = /\/\s*>$/.test(trimmed);
+
+    return {
+      type: isSelfClosing ? 'self-close' : 'open',
+      tagName,
+      line,
+      column,
+      raw
+    };
+  }
+
+  private advancePosition(text: string, currentLine: number, currentColumn: number): { line: number; column: number } {
+    let line = currentLine;
+    let column = currentColumn;
+
+    for (const char of text) {
+      if (char === '\n') {
+        line++;
+        column = 1;
+      } else {
+        column++;
+      }
+    }
+
+    return { line, column };
+  }
+}
+
+utilisation 
+import { Component, signal } from '@angular/core';
+import { HtmlValidationError, HtmlValidationService } from './html-validation.service';
+
+@Component({
+  selector: 'app-html-editor',
+  templateUrl: './html-editor.component.html'
+})
+export class HtmlEditorComponent {
+  htmlContent = ''; // ici tu branches la valeur venant de CodeMirror
+  validationErrors = signal<HtmlValidationError[]>([]);
+
+  constructor(private readonly htmlValidationService: HtmlValidationService) {}
+
+  onValidateClick(): void {
+    const errors = this.htmlValidationService.validate(this.htmlContent);
+    this.validationErrors.set
